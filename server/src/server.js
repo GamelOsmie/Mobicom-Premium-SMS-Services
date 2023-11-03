@@ -12,7 +12,7 @@ const server = http.createServer(app);
 // getClient();
 
 sequelize
-  .sync({ force: true })
+  .sync({ force: false })
   .then(() => {
     console.log(`Database is connected and ready ✅`);
   })
