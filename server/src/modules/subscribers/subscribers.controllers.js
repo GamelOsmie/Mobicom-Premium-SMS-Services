@@ -128,7 +128,7 @@ const updateLowBalance = async (req, res, next) => {
 
     return res.status(200).json({
       status: 'success',
-      message: 'Enough balance update successful',
+      message: 'Low balance update successful',
       data: subscriber,
     });
   } catch (error) {
@@ -136,19 +136,6 @@ const updateLowBalance = async (req, res, next) => {
   }
 };
 
-const balanceStatusUpdateRecord = async (req, res, next) => {
-  const {
-    update_date,
-    total_subscribers,
-    enough_balance_subscribers,
-    low_balance_subscribers,
-  } = req.body;
-
-  try {
-  } catch (error) {
-    return next(errorResponse(400, error.message));
-  }
-};
 
 module.exports = {
   subscribe,

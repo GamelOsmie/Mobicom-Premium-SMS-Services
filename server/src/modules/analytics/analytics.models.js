@@ -11,15 +11,15 @@ const BalanceUpdateRecord = sequelize.define(
     },
     update_date: DataTypes.DATE,
     total_subscribers: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER,
       defaultValue: 0,
     },
     enough_balance_subscribers: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER,
       defaultValue: 0,
     },
     low_balance_subscribers: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER,
       defaultValue: 0,
     },
   },
@@ -40,15 +40,15 @@ const SMSDeliveryRecord = sequelize.define(
     },
     delivery_date: DataTypes.DATE,
     total_subscribers: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER,
       defaultValue: 0,
     },
     delivered: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER,
       defaultValue: 0,
     },
     undelivered: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER,
       defaultValue: 0,
     },
   },
