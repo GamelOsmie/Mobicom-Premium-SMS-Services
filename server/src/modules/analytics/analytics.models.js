@@ -1,62 +1,62 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../../utils/dbConfig');
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const BalanceUpdateRecord = sequelize.define(
-  'BalanceUpdateRecord',
+const BalanceUpdateRecordSchema = new Schema(
   {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
-    update_date: DataTypes.DATE,
+    update_date: Date,
     total_subscribers: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
+      type: Number,
+      default: 0,
     },
     enough_balance_subscribers: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
+      type: Number,
+      default: 0,
     },
     low_balance_subscribers: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
+      type: Number,
+      default: 0,
     },
   },
   {
-    timestamps: true,
-    createdAt: 'created_at',
-    updatedAt: false,
+    timestamps: {
+      createdAt: 'created_at',
+      updatedAt: false,
+    },
   },
 );
 
-const SMSDeliveryRecord = sequelize.define(
-  'SMSDeliveryRecord',
+const BalanceUpdateRecord = mongoose.model(
+  'BalanceUpdateRecord',
+  BalanceUpdateRecordSchema,
+);
+
+const SMSDeliveryRecordSchema = new Schema(
   {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
-    delivery_date: DataTypes.DATE,
+    delivery_date: Date,
     total_subscribers: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
+      type: Number,
+      default: 0,
     },
     delivered: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
+      type: Number,
+      default: 0,
     },
     undelivered: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
+      type: Number,
+      default: 0,
     },
   },
   {
-    timestamps: true,
-    createdAt: 'created_at',
-    updatedAt: false,
+    timestamps: {
+      createdAt: 'created_at',
+      updatedAt: false,
+    }
   },
+);
+
+const SMSDeliveryRecord = mongoose.model(
+  'SMSDeliveryRecord',
+  SMSDeliveryRecordSchema,
 );
 
 module.exports = { SMSDeliveryRecord, BalanceUpdateRecord };

@@ -14,7 +14,7 @@ const requireAuthAPIKey = async (req, res, next) => {
   try {
     const encrypted_key = encryption(api_token);
 
-    const api_key = await APIKey.findOne({ where: { api_key: encrypted_key } });
+    const api_key = await APIKey.findOne({ api_key: encrypted_key });
 
     if (!api_key) {
       return next(errorResponse(401, 'Invalid API Key'));

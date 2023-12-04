@@ -7,7 +7,7 @@ const subscribe = async (req, res) => {
 
   try {
     const existing_subscriber = await Subscriber.findOne({
-      where: { msisdn_no },
+      msisdn_no,
     });
 
     if (existing_subscriber && existing_subscriber.is_subscribed === true) {
@@ -51,7 +51,7 @@ const unsubscribe = async (req, res) => {
 
   try {
     const subscriber = await Subscriber.findOne({
-      where: { msisdn_no },
+      msisdn_no,
     });
 
     if (!subscriber) {
@@ -89,7 +89,8 @@ const updateEnoughBalance = async (req, res, next) => {
 
   try {
     const subscriber = await Subscriber.findOne({
-      where: { msisdn_no, is_subscribed: true },
+      msisdn_no,
+      is_subscribed: true,
     });
 
     if (!subscriber) {
@@ -115,7 +116,8 @@ const updateLowBalance = async (req, res, next) => {
 
   try {
     const subscriber = await Subscriber.findOne({
-      where: { msisdn_no, is_subscribed: true },
+      msisdn_no,
+      is_subscribed: true,
     });
 
     if (!subscriber) {
@@ -135,7 +137,6 @@ const updateLowBalance = async (req, res, next) => {
     return next(errorResponse(400, error.message));
   }
 };
-
 
 module.exports = {
   subscribe,

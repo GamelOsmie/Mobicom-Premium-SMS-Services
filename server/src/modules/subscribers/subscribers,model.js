@@ -1,38 +1,30 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../../utils/dbConfig');
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const Subscriber = sequelize.define(
-  'Subscriber',
+const Subscriber2021Schema = new Schema(
   {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
     msisdn_no: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      require: true,
       unique: true,
-      validate: {
-        notNull: true,
-        len: [9, 20],
-      },
     },
     is_subscribed: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
+      type: Boolean,
+      default: true,
     },
     has_enough_balance: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      type: Boolean,
+      default: true,
     },
-    balance_updated_at: DataTypes.DATE,
-    subscription_date: DataTypes.DATE,
-    unsubscription_date: DataTypes.DATE,
+    balance_updated_at: Date,
+    subscription_date: Date,
+    unsubscription_date: Date,
   },
   {
     timestamps: false,
   },
 );
 
-module.exports = Subscriber;
+const Subscriber2021 = mongoose.model('Subscriber2021', Subscriber2021Schema);
+
+module.exports = Subscriber2021;

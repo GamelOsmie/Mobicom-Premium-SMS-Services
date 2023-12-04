@@ -1,22 +1,18 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../../utils/dbConfig');
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const APIKey = sequelize.define(
-  'APIKey',
+const APIKeySchema = new Schema(
   {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
     api_key: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      require: false,
     },
   },
   {
     timestamps: false,
   },
 );
+
+const APIKey = mongoose.model('APIKey', APIKeySchema);
 
 module.exports = APIKey;

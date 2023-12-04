@@ -1,8 +1,7 @@
 const app = require('./app');
 const http = require('http');
-const sequelize = require('./utils/dbConfig');
-// const getClient = require('./utils/redisClient');
-//system constants
+const mongoose = require('mongoose');
+
 const PORT = process.env.PORT || 5000;
 
 //creating a server
@@ -11,14 +10,14 @@ const server = http.createServer(app);
 // redis connection
 // getClient();
 
-sequelize
-  .sync({ force: false })
-  .then(() => {
-    console.log(`Database is connected and ready ✅`);
-  })
+mongoose
+  .connect(process.env.MONGO_URL)
   .then(() => {
     server.listen(PORT, () => {
-      console.log(`Server is connected and ready on port ${PORT} 🚀`);
+      console.log('MongoDB server is connected and ready 👍');
+      console.log(`Server has started on ${PORT} 🚀`);
     });
   })
-  .catch((err) => console.error(err));
+  .catch((err) => {
+    console.error(err.message);
+  });
