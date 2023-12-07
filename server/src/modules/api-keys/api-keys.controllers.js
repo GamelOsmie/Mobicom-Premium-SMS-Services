@@ -25,7 +25,7 @@ const createAPIKey = async (req, res, next) => {
 
 const getAllAPIKeys = async (req, res, next) => {
   try {
-    const keys = await APIKey.findAll({});
+    const keys = await APIKey.find({});
 
     let decrypted_keys = [];
 

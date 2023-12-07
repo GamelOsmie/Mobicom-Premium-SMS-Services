@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const Subscriber2021Schema = new Schema(
+const Subscriber2023Schema = new Schema(
   {
     msisdn_no: {
       type: String,
@@ -14,17 +14,18 @@ const Subscriber2021Schema = new Schema(
     },
     has_enough_balance: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     balance_updated_at: Date,
     subscription_date: Date,
     unsubscription_date: Date,
   },
   {
+    versionKey: false,
     timestamps: false,
   },
 );
 
-const Subscriber2021 = mongoose.model('Subscriber2021', Subscriber2021Schema);
+const Subscriber2023 = mongoose.model('Subscriber2023', Subscriber2023Schema);
 
-module.exports = Subscriber2021;
+module.exports = Subscriber2023;

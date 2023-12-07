@@ -1,5 +1,6 @@
 const errorResponse = require('../../utils/errorResponse');
-const Subscriber = require('./subscribers,model');
+const Subscriber = require('./subscribers.model');
+const paginate = require('../../utils/paginationConfig');
 // const updateEnoughBalanceQueue = require('../../queue-jobs/update_enough_balance');
 
 const subscribe = async (req, res) => {
@@ -138,9 +139,99 @@ const updateLowBalance = async (req, res, next) => {
   }
 };
 
+const getAllSubscribers = async (req, res, next) => {
+  const pageSize = 150;
+  const pageNum = parseInt(req.query.page) || 1;
+  const offset = pageSize * (pageNum - 1);
+
+  try {
+    const subscribers = await Subscriber.find({ is_subscribed: true })
+      .lean()
+      .skip(offset)
+      .limit(pageSize);
+
+    const count = await Subscriber.countDocuments({ is_subscribed: true });
+    const meta = paginate({ count, pageNum, pageSize, req });
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Subscribers fetched successfully',
+      data: subscribers,
+      meta,
+    });
+  } catch (error) {
+    return next(errorResponse(400, error.message));
+  }
+};
+
+const getLowBalanceSubscribers = async (req, res, next) => {
+  const pageSize = 150;
+  const pageNum = parseInt(req.query.page) || 1;
+  const offset = pageSize * (pageNum - 1);
+
+  try {
+    const subscribers = await Subscriber.find({
+      has_enough_balance: false,
+      is_subscribed: true,
+    })
+      .lean()
+      .skip(offset)
+      .limit(pageSize);
+
+    const count = await Subscriber.countDocuments({
+      has_enough_balance: false,
+      is_subscribed: true,
+    });
+    const meta = paginate({ count, pageNum, pageSize, req });
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Subscribers fetched successfully',
+      data: subscribers,
+      meta,
+    });
+  } catch (error) {
+    return next(errorResponse(400, error.message));
+  }
+};
+
+const getEnoughBalanceSubscribers = async (req, res, next) => {
+  const pageSize = 150;
+  const pageNum = parseInt(req.query.page) || 1;
+  const offset = pageSize * (pageNum - 1);
+
+  try {
+    const subscribers = await Subscriber.find({
+      has_enough_balance: true,
+      is_subscribed: true,
+    })
+      .lean()
+      .skip(offset)
+      .limit(pageSize);
+
+    const count = await Subscriber.countDocuments({
+      has_enough_balance: true,
+      is_subscribed: true,
+    });
+    const meta = paginate({ count, pageNum, pageSize, req });
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Subscribers fetched successfully',
+      data: subscribers,
+      meta,
+    });
+  } catch (error) {
+    return next(errorResponse(400, error.message));
+  }
+};
+
 module.exports = {
   subscribe,
   unsubscribe,
   updateEnoughBalance,
   updateLowBalance,
+  getAllSubscribers,
+  getLowBalanceSubscribers,
+  getEnoughBalanceSubscribers,
 };

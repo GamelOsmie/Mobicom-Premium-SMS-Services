@@ -10,7 +10,10 @@ const cookieParser = require('cookie-parser');
 const errorHandler = require('./middleware/error');
 
 // routes import
-const subscribersRoute = require('./modules/subscribers/subscribers.routes');
+const subscribers2021Route = require('./modules/subscribers_2021/subscribers.routes');
+const subscribers2022Route = require('./modules/subscribers_2022/subscribers.routes');
+const subscribers2023Route = require('./modules/subscribers_2023/subscribers.routes');
+const subscribers2024Route = require('./modules/subscribers_2024/subscribers.routes');
 const apiKeysRoute = require('./modules/api-keys/api-keys.routes');
 const analyticsRoute = require('./modules/analytics/analytics.routes');
 
@@ -30,7 +33,10 @@ app.use(helmet()),
     next();
   });
 
-app.use('/api/v1', subscribersRoute);
+app.use('/api/v1/2021', subscribers2021Route);
+app.use('/api/v1/2022', subscribers2022Route);
+app.use('/api/v1/2023', subscribers2023Route);
+app.use('/api/v1/2024', subscribers2024Route);
 app.use('/api/v1', apiKeysRoute);
 app.use('/api/v1', analyticsRoute);
 
