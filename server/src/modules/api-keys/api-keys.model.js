@@ -9,6 +9,7 @@ const APIKeySchema = new Schema(
     },
   },
   {
+    versionKey: false,
     timestamps: false,
   },
 );
