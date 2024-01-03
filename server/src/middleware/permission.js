@@ -3,7 +3,7 @@ const errorResponse = require("../utils/errorResponse");
 const permission = (...roles) => {
   return (req, res, next) => {
     
-    if (!roles.includes(req.user.role)) {
+    if (!roles.includes(req.user.user_role)) {
       return next(
         errorResponse(
           403,

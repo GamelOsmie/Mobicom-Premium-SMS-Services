@@ -140,24 +140,24 @@ const updateLowBalance = async (req, res, next) => {
 };
 
 const getAllSubscribers = async (req, res, next) => {
-  const pageSize = 150;
-  const pageNum = parseInt(req.query.page) || 1;
-  const offset = pageSize * (pageNum - 1);
+  // const pageSize = 150;
+  // const pageNum = parseInt(req.query.page) || 1;
+  // const offset = pageSize * (pageNum - 1);
 
   try {
     const subscribers = await Subscriber.find({ is_subscribed: true })
       .lean()
-      .skip(offset)
-      .limit(pageSize);
+      // .skip(offset)
+      // .limit(pageSize);
 
-    const count = await Subscriber.countDocuments({ is_subscribed: true });
-    const meta = paginate({ count, pageNum, pageSize, req });
+    // const count = await Subscriber.countDocuments({ is_subscribed: true });
+    // const meta = paginate({ count, pageNum, pageSize, req });
 
     return res.status(200).json({
       status: 'success',
       message: 'Subscribers fetched successfully',
       data: subscribers,
-      meta,
+      // meta,
     });
   } catch (error) {
     return next(errorResponse(400, error.message));

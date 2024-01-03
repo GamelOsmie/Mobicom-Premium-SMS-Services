@@ -4,7 +4,6 @@ const paginate = function ({ count, pageNum, pageSize, req }) {
     '://' +
     req.get('host') +
     req.baseUrl +
-    '/' +
     req.path +
     '?page=';
 

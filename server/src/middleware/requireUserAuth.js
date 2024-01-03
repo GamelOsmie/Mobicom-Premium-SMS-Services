@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
-const User = require('../modules/users/users.models');
+
 const errorResponse = require('../utils/errorResponse');
+const User = require('../modules/users/users.model');
 
 const requireUserAuth = async (req, res, next) => {
   //using cookies for auth
@@ -14,15 +15,12 @@ const requireUserAuth = async (req, res, next) => {
 
   try {
     //verify the token and grab the id from the token
-    const { id } = jwt.verify(token, process.env.JWT_SECRET);
+    const { _id } = jwt.verify(token, process.env.JWT_SECRET);
 
     //get the user that made the request and save it as part of the request
-    req.user = await User.findOne(
-      {
-        where: { id },
-      },
-      { attributes: ['id', 'role', 'is_active'] },
-    );
+    req.user = await User.findById({
+      _id,
+    }).select('_id is_active user_role');
 
     if (req.user.is_active === false) {
       res.cookie('token', '', { maxAge: 1000 });

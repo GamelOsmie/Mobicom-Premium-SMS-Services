@@ -14,8 +14,11 @@ const subscribers2021Route = require('./modules/subscribers_2021/subscribers.rou
 const subscribers2022Route = require('./modules/subscribers_2022/subscribers.routes');
 const subscribers2023Route = require('./modules/subscribers_2023/subscribers.routes');
 const subscribers2024Route = require('./modules/subscribers_2024/subscribers.routes');
+const contentRoute = require('./modules/content/content.routes');
+const usersRoute = require('./modules/users/users.routes');
 const apiKeysRoute = require('./modules/api-keys/api-keys.routes');
 const analyticsRoute = require('./modules/analytics/analytics.routes');
+const smsRoute = require('./modules/sms/sms.routes');
 
 // init express
 const app = express();
@@ -37,8 +40,11 @@ app.use('/api/v1/2021', subscribers2021Route);
 app.use('/api/v1/2022', subscribers2022Route);
 app.use('/api/v1/2023', subscribers2023Route);
 app.use('/api/v1/2024', subscribers2024Route);
+app.use('/api/v1/contents', contentRoute);
+app.use('/api/v1', usersRoute);
 app.use('/api/v1', apiKeysRoute);
 app.use('/api/v1', analyticsRoute);
+app.use('/api/v1', smsRoute);
 
 //error handler
 app.use(errorHandler);
