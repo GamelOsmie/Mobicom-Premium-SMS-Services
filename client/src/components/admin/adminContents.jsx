@@ -24,8 +24,22 @@ function ContentList({ contents, isLoading }) {
             className='border border-gray-300 rounded-xl p-5 flex flex-col justify-between'
           >
             <div>
-              <div className='flex justify-end items-center mb-10'>
-                {/* <span className='pending-pill'>pending</span> */}
+              <div className={`flex ${user?.user_role == 'Content Creator' ? 'justify-between' : 'justify-end'} items-center mb-10`}>
+                {user?.user_role == 'Content Creator' && (
+                  <div>
+                    {content.approval_status == 'pending' && (
+                      <span className='pending-pill'>pending</span>
+                    )}
+
+                    {content.approval_status == 'approved' && (
+                      <span className='active-pill'>approved</span>
+                    )}
+
+                    {content.approval_status == 'rejected' && (
+                      <span className='inactive-pill'>rejected</span>
+                    )}
+                  </div>
+                )}
 
                 {content.publication_status == 'draft' && (
                   <Link to={content.slug}>
@@ -46,10 +60,7 @@ function ContentList({ contents, isLoading }) {
                 </p>
               </div>
               <p className='text-gray-400 mb-3'>{content.body}</p>
-              <p className='text-primary text-sm flex gap-px items-center mb-8'>
-                <RxAvatar />
-                <span className=''> {content?.author?.username} </span>
-              </p>
+
             </div>
 
             {content.publication_status == 'published' &&
@@ -152,7 +163,7 @@ function PageBody() {
               type='button'
               className='btn-primary md:ml-4 w-full md:w-fit'
             >
-              Create Document
+              Create Content
             </button>
           </Link>
         </div>

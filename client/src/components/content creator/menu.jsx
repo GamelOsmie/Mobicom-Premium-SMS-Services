@@ -4,7 +4,7 @@ export const creatorMenuLinks = [
     path: '/overview',
   },
   {
-    name: 'My Content',
-    path: '/my-content',
+    name: 'My Contents',
+    path: '/my-contents',
   },
 ];

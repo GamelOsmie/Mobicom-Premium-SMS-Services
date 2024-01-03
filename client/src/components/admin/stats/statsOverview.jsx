@@ -12,28 +12,10 @@ import { useGetDashboardStats } from '../../../hooks/useStats';
 export default function StatsOverview() {
   const { data: stats, isLoading } = useGetDashboardStats();
 
-  const data = [
-    {
-      name: '2021',
-      deliveries: 2400,
-    },
-    {
-      name: '2022',
-      deliveries: 1398,
-    },
-    {
-      name: '2023',
-      deliveries: 9800,
-    },
-    {
-      name: '2024',
-      deliveries: 3908,
-    },
-  ];
-
+  
   return (
     <>
-      {stats?.data && (
+      {!isLoading && (
         <div className='grid lg:grid-cols-5 gap-10 '>
           <div className='space-y-5 col-span-5 lg:col-span-2'>
             {/* subs */}

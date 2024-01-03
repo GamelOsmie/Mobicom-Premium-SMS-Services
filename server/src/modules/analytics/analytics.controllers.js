@@ -14,6 +14,8 @@ const {
   SMSDeliveryRecord2024,
 } = require('./analytics.models');
 
+const Content = require('../content/content.models');
+
 const createBalanceStatusUpdateRecord = async (req, res, next) => {
   const {
     update_date,
@@ -219,8 +221,62 @@ const dashboardOverview = async (req, res, next) => {
   }
 };
 
+const creatorOverview = async (req, res, next) => {
+  const {_id} = req.user
+  
+  try {
+    const published = await Content.countDocuments({
+      author: _id,
+      publication_status: 'published',
+    });
+    const draft = await Content.countDocuments({
+      author: _id,
+      publication_status: 'draft',
+    });
+    const approved = await Content.countDocuments({
+      author: _id,
+      publication_status: 'published',
+      approval_status: 'approved',
+    });
+    const pending = await Content.countDocuments({
+      author: _id,
+      publication_status: 'published',
+      approval_status: 'pending',
+    });
+    const rejected = await Content.countDocuments({
+      author: _id,
+      publication_status: 'published',
+      approval_status: 'rejected',
+    });
+
+
+    const recent_contents = await Content.find({
+      author: _id,
+    }).sort({ updated_at: -1 }).limit(3)
+
+    return res.json({
+      status: 'success',
+      message: 'Overview fetched successfully',
+      data: {
+        published,
+        draft,
+        approved,
+        pending,
+        rejected,
+        recent_contents,
+      },
+    });
+
+
+
+  } catch (error) {
+    return next(errorResponse(400, error.message));
+  }
+};
+
 module.exports = {
   createBalanceStatusUpdateRecord,
   createSMSDeliveryRecord,
   dashboardOverview,
+  creatorOverview,
 };

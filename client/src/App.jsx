@@ -1,13 +1,16 @@
 import { useLayoutEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import {
-  createBrowserRouter,
   Navigate,
   RouterProvider,
+  createBrowserRouter,
 } from 'react-router-dom';
+import Stats2021 from './components/admin/stats/stats2021';
+import StatsOverview from './components/admin/stats/statsOverview';
 import ProtectedRoute from './components/global/protectedRoute';
 import Toast from './components/global/toast';
 import { useFetchMyProfile } from './hooks/useAuth';
+import { setUserIsLoggedOut } from './redux/authSlice';
 import { getUser } from './utils/helpers';
 import AddUser from './views/AddUser';
 import Contents from './views/Contents';
@@ -16,14 +19,13 @@ import Dashboard from './views/Dashboard';
 import EditUser from './views/EditUser';
 import Login from './views/Login';
 import NotFound from './views/NotFound';
-import SMS from './views/SMS';
-import UpdateContent from './views/UpdateContent';
-import Users from './views/Users';
-import StatsOverview from './components/admin/stats/statsOverview';
-import Stats2021 from './components/admin/stats/stats2021';
-import SMSMgt from './views/SMSMgt';
+import Overview from './views/Overview';
 import Profile from './views/Profile';
+import SMS from './views/SMS';
+import SMSMgt from './views/SMSMgt';
+import UpdateContent from './views/UpdateContent';
 import UpdateProfile from './views/UpdateProfile';
+import Users from './views/Users';
 
 function App() {
   const dispatch = useDispatch();
@@ -37,6 +39,14 @@ function App() {
       path: '/',
       element: <Navigate to='/dashboard/overview' replace />,
       errorElement: <NotFound />,
+    },
+    {
+      path: '/overview',
+      element: (
+        <ProtectedRoute>
+          <Overview />
+        </ProtectedRoute>
+      ),
     },
     {
       path: '/dashboard',

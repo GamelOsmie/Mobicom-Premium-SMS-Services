@@ -24,3 +24,24 @@ export const useGetDashboardStats = () => {
     },
   });
 };
+
+export const useGetCreatorStats = () => {
+  const dispatch = useDispatch();
+
+  return useQuery({
+    queryKey: ['creator-stats'],
+    queryFn: () => request({ url: '/records/content-creator-overview' }),
+    onSettled: async (response) => {
+      const { status, message } = response;
+
+      if (status === 'error') {
+        dispatch(
+          setNotification({
+            type: 'error',
+            message,
+          }),
+        );
+      }
+    },
+  });
+};

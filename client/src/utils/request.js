@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export const baseURL = 'http://localhost:5000/api/v1';
-// export const baseURL = 'https://www.platform.shalimar.sl/api/v1';
+// export const baseURL = 'http://localhost:5000/api/v1';
+export const baseURL = 'https://mobicomsms-w7si.onrender.com/api/v1';
 
 const instance = axios.create({
   baseURL,
