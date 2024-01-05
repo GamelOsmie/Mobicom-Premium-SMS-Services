@@ -38,7 +38,7 @@ const PageBody = () => {
           {/* <!-- search input --> */}
 
           {/* <!-- add User button--> */}
-          <Link to='create'>
+          <Link to='/my-contents/create'>
             <button
               type='button'
               className='btn-primary md:ml-4 w-full md:w-fit'

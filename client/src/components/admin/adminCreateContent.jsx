@@ -17,8 +17,9 @@ function PageBody() {
     reset,
   } = useForm();
 
-  // monitor character limitdas
+  // monitor character limit 
   const message = watch('body');
+  const title = watch('subject');
 
   const { mutate: createContent, isLoading } = useCreateContent({
     onSuccess: (response) => {
@@ -52,8 +53,23 @@ function PageBody() {
             {...register('subject', {
               required: true,
               minLength: 2,
+              maxLength: 120,
             })}
           />
+          <div className='flex justify-end'>
+            {title?.length <= 120 && (
+              <p className='text-gray-400 text-sm font-light'>
+                {120 - title?.length} characters remaining
+              </p>
+            )}
+          </div>
+          <div className='flex justify-end'>
+            {title?.length > 120 && (
+              <p className='text-rejected text-sm font-light'>
+                remove {title?.length - 120} characters
+              </p>
+            )}
+          </div>
           <>
             {errors.subject?.type === 'required' && (
               <p className='form-error-text flex items-center gap-1'>
@@ -69,6 +85,13 @@ function PageBody() {
                 short
               </p>
             )}
+            {errors.subject?.type === 'maxLength' && (
+              <p className='form-error-text flex items-center gap-1'>
+                <CgDanger className='text-lg' />{' '}
+                <span className='font-medium'>Oops!</span> Your subject
+                shouldn't be longer than 120 characters
+              </p>
+            )}
           </>
         </div>
 
@@ -77,20 +100,27 @@ function PageBody() {
             Message
           </label>
           <textarea
-            rows={4}
+            rows={8}
             type='text'
             id='body'
             className='input w-full'
             placeholder='message'
             {...register('body', {
               minLength: 2,
-              maxLength: 120,
+              maxLength: 400,
             })}
           />
           <div className='flex justify-end'>
-            {message?.length <= 120 && (
+            {message?.length <= 400 && (
               <p className='text-gray-400 text-sm font-light'>
-                {120 - message?.length} characters remaining
+                {400 - message?.length} characters remaining
+              </p>
+            )}
+          </div>
+          <div className='flex justify-end'>
+            {message?.length > 400 && (
+              <p className='text-rejected text-sm font-light'>
+                remove {message?.length - 400} characters
               </p>
             )}
           </div>
@@ -105,7 +135,7 @@ function PageBody() {
             {errors.body?.type === 'maxLength' && (
               <p className='form-error-text flex items-start gap-1'>
                 <CgDanger className='text-lg' />
-                Your message shouldn't be longer than 120 characters
+                Your message shouldn't be longer than 400 characters
               </p>
             )}
           </>

@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { FiSend } from 'react-icons/fi';
 import { IoMdTime } from 'react-icons/io';
-import { RxAvatar } from 'react-icons/rx';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useFetchAllMyContents } from '../../hooks/useContents';
@@ -24,22 +23,30 @@ function ContentList({ contents, isLoading }) {
             className='border border-gray-300 rounded-xl p-5 flex flex-col justify-between'
           >
             <div>
-              <div className={`flex ${user?.user_role == 'Content Creator' ? 'justify-between' : 'justify-end'} items-center mb-10`}>
-                {user?.user_role == 'Content Creator' && (
-                  <div>
-                    {content.approval_status == 'pending' && (
-                      <span className='pending-pill'>pending</span>
-                    )}
+              <div
+                className={`flex ${
+                  user?.user_role == 'Content Creator' &&
+                  content.publication_status == 'published'
+                    ? 'justify-between'
+                    : 'justify-end'
+                } items-center mb-10`}
+              >
+                {user?.user_role == 'Content Creator' &&
+                  content.publication_status == 'published' && (
+                    <div>
+                      {content.approval_status == 'pending' && (
+                        <span className='pending-pill'>pending</span>
+                      )}
 
-                    {content.approval_status == 'approved' && (
-                      <span className='active-pill'>approved</span>
-                    )}
+                      {content.approval_status == 'approved' && (
+                        <span className='active-pill'>approved</span>
+                      )}
 
-                    {content.approval_status == 'rejected' && (
-                      <span className='inactive-pill'>rejected</span>
-                    )}
-                  </div>
-                )}
+                      {content.approval_status == 'rejected' && (
+                        <span className='inactive-pill'>rejected</span>
+                      )}
+                    </div>
+                  )}
 
                 {content.publication_status == 'draft' && (
                   <Link to={content.slug}>
@@ -60,7 +67,6 @@ function ContentList({ contents, isLoading }) {
                 </p>
               </div>
               <p className='text-gray-400 mb-3'>{content.body}</p>
-
             </div>
 
             {content.publication_status == 'published' &&

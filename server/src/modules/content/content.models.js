@@ -19,10 +19,11 @@ const ContentSchema = new Schema(
       type: String,
       required: true,
       unique: true,
+       maxLength: 120,
     },
     body: {
       type: String,
-      maxLength: 120,
+      maxLength: 400,
     },
     publication_status: {
       type: String,
