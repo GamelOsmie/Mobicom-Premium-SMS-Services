@@ -131,12 +131,14 @@ function PageBody() {
   }, [selectedGroup]);
 
   const onAddToRecipientList = async (sub) => {
-    if (!selectedContacts.includes(sub)) {
-      console.log(sub);
+    let selectedSub = [];
 
+    if (!selectedContacts.includes(sub)) {
+      selectedSub.push(sub);
       setSelectedContacts([...selectedContacts, sub]);
     } else {
-      const filteredList = selectedContacts.filter((item) => item != sub);
+      const filteredList = selectedSub.filter((item) => item != sub);
+      selectedSub = filteredList;
       setSelectedContacts(filteredList);
     }
 
@@ -144,7 +146,7 @@ function PageBody() {
       all_subscribers: false,
       all_enough_balance: false,
       all_low_balance: false,
-      list: selectedContacts,
+      list: selectedSub,
     });
   };
 
