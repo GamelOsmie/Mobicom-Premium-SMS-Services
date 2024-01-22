@@ -55,7 +55,7 @@ const sendSMS = async (req, res, next) => {
         (async () => {
           try {
             const response = await axios.get(
-              `${process.env.AFRICEL_SMPP_HOST_PORT}/send?username=${process.env.AFRICEL_SMPP_USERNAME}&password=${process.env.AFRICEL_SMPP_PASSWORD}&from=${category}&to=${sub.msisdn_no}&content=${refinedSMS}&dlr=yes&dlr-level=3&dlr-method=GET&dlr-url=http://10.255.255.2/sms/delivery.php`,
+              `${process.env.AFRICEL_SMPP_HOST_PORT}/send?username=${process.env.AFRICEL_SMPP_USERNAME}&password=${process.env.AFRICEL_SMPP_PASSWORD}&from=${category}&to=${sub.msisdn_no}&content=${refinedSMS}&dlr=yes&dlr-level=3&dlr-method=GET&dlr-url=${process.env.AFRICEL_SMPP_HOST_PORT}/sms/delivery.php`,
             );
 
             console.log(response);
@@ -105,7 +105,7 @@ const sendSMS = async (req, res, next) => {
         (async () => {
           try {
             const response = await axios.get(
-              `${process.env.AFRICEL_SMPP_HOST_PORT}/send?username=${process.env.AFRICEL_SMPP_USERNAME}&password=${process.env.AFRICEL_SMPP_PASSWORD}&from=${category}&to=${sub.msisdn_no}&content=${refinedSMS}&dlr=yes&dlr-level=3&dlr-method=GET&dlr-url=http://10.255.255.2/sms/delivery.php`,
+              `${process.env.AFRICEL_SMPP_HOST_PORT}/send?username=${process.env.AFRICEL_SMPP_USERNAME}&password=${process.env.AFRICEL_SMPP_PASSWORD}&from=${category}&to=${sub.msisdn_no}&content=${refinedSMS}&dlr=yes&dlr-level=3&dlr-method=GET&dlr-url=${process.env.AFRICEL_SMPP_HOST_PORT}/sms/delivery.php`,
             );
 
             if (response.status_code == 200) {
@@ -153,7 +153,7 @@ const sendSMS = async (req, res, next) => {
         (async () => {
           try {
             const response = await axios.get(
-              `${process.env.AFRICEL_SMPP_HOST_PORT}/send?username=${process.env.AFRICEL_SMPP_USERNAME}&password=${process.env.AFRICEL_SMPP_PASSWORD}&from=${category}&to=${sub.msisdn_no}&content=${refinedSMS}&dlr=yes&dlr-level=3&dlr-method=GET&dlr-url=http://10.255.255.2/sms/delivery.php`,
+              `${process.env.AFRICEL_SMPP_HOST_PORT}/send?username=${process.env.AFRICEL_SMPP_USERNAME}&password=${process.env.AFRICEL_SMPP_PASSWORD}&from=${category}&to=${sub.msisdn_no}&content=${refinedSMS}&dlr=yes&dlr-level=3&dlr-method=GET&dlr-url=${process.env.AFRICEL_SMPP_HOST_PORT}/sms/delivery.php`,
             );
 
             if (response.status_code == 200) {
@@ -201,7 +201,7 @@ const sendSMS = async (req, res, next) => {
         (async () => {
           try {
             const response = await axios.get(
-              `${process.env.AFRICEL_SMPP_HOST_PORT}/send?username=${process.env.AFRICEL_SMPP_USERNAME}&password=${process.env.AFRICEL_SMPP_PASSWORD}&from=${category}&to=${sub.msisdn_no}&content=${refinedSMS}&dlr=yes&dlr-level=3&dlr-method=GET&dlr-url=http://10.255.255.2/sms/delivery.php`,
+              `${process.env.AFRICEL_SMPP_HOST_PORT}/send?username=${process.env.AFRICEL_SMPP_USERNAME}&password=${process.env.AFRICEL_SMPP_PASSWORD}&from=${category}&to=${sub.msisdn_no}&content=${refinedSMS}&dlr=yes&dlr-level=3&dlr-method=GET&dlr-url=${process.env.AFRICEL_SMPP_HOST_PORT}/sms/delivery.php`,
             );
 
             if (response.status_code == 200) {
