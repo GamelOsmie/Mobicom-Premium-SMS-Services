@@ -1,6 +1,6 @@
 import axios from 'axios';
 // export const baseURL = 'http://localhost:5000/api/v1'; 
-export const baseURL = 'https://mobicomsl.gamelosman.com/api/v1';
+export const baseURL = 'http://24.199.79.143//api/v1';
 
 const instance = axios.create({
   baseURL,
