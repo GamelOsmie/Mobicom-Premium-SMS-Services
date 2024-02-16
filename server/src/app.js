@@ -31,12 +31,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(cookieParser());
 app.use(helmet()),
-app.use((req, res, next) => {
-    console.log(req.method, req.path, res.statusCode);
+  app.use((req, res, next) => {
+    //console.log(req.method, req.path, res.statusCode);
+
+    res.setHeader(
+      'Content-Security-Policy',
+      "default-src 'self'; connect-src 'self' *;",
+    );
 
     next();
-});
-
+  });
 
 app.use('/api/v1/2020', subscribers2020Route);
 app.use('/api/v1/2021', subscribers2021Route);

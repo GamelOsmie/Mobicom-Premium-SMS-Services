@@ -1,6 +1,6 @@
 import axios from 'axios';
 // export const baseURL = 'http://localhost:5000/api/v1'; 
-export const baseURL = 'http://146.190.169.69/api/v1';
+export const baseURL = 'https://smshub.mobicomsalone.com/api/v1';
 
 const instance = axios.create({
   baseURL,
