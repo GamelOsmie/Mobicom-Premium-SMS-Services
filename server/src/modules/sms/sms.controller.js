@@ -27,7 +27,7 @@ const sendSMS = async (req, res, next) => {
       .replace(/"/g, '\\"');
 
     // send to 2020 subs
-    if (category == '2021') {
+    if (category == '2020') {
       
       if (group.all_subscribers) {
         receivers = await Subscriber2020.find();

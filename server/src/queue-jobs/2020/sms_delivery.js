@@ -6,11 +6,11 @@ const {
 } = require('../../modules/analytics/analytics.models');
 const AFRICELL_SMS_API = require('../../utils/smsAPIs');
 
-const smsDeliveryQueueFor2022 = new Bull('smsDeliveryQueueFor2022', {
+const smsDeliveryQueueFor2020 = new Bull('smsDeliveryQueueFor2020', {
   redis: getRedisClient,
 });
 
-smsDeliveryQueueFor2022.process(async (job, done) => {
+smsDeliveryQueueFor2020.process(async (job, done) => {
   const { receivers, message } = job.data;
 
   try {
@@ -32,11 +32,7 @@ smsDeliveryQueueFor2022.process(async (job, done) => {
             Message: message,
           });
 
-          if (
-            response.ResultCode == 200 ||
-            response.status_code == 200 ||
-            response.statusCode == 200
-          ) {
+          if (response.status == 200) {
             delivered += 1;
             console.log(
               `message deliver to ${
@@ -45,7 +41,7 @@ smsDeliveryQueueFor2022.process(async (job, done) => {
             );
           } else {
             undelivered += 1;
-            console.log(`${sub.msisdn_no} delivery error:`, response);
+            console.log(`${sub.msisdn_no} delivery unsuccessful`);
           }
         } catch (error) {
           undelivered += 1;
@@ -71,4 +67,4 @@ smsDeliveryQueueFor2022.process(async (job, done) => {
   }
 });
 
-module.exports = smsDeliveryQueueFor2022;
+module.exports = smsDeliveryQueueFor2020;
