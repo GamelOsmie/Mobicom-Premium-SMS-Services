@@ -36,7 +36,7 @@ app.use(helmet()),
 
     res.setHeader(
       'Content-Security-Policy',
-      "default-src 'self'; connect-src 'self' *;",
+      "default-src 'self'; connect-src 'self' *; style-src 'self' *",
     );
 
     next();
