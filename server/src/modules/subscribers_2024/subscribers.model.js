@@ -16,6 +16,11 @@ const Subscriber2024Schema = new Schema(
       type: Boolean,
       default: false,
     },
+    network: {
+      type: String,
+      enum: ['Africell', 'QCell', 'Orange'],
+      require: true,
+    },
     balance_updated_at: Date,
     subscription_date: Date,
     unsubscription_date: Date,

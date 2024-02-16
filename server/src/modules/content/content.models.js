@@ -12,7 +12,7 @@ const ContentSchema = new Schema(
     },
     category: {
       type: String,
-      enum: ['2021', '2022', '2023', '2024'],
+      enum: ['2020','2021', '2022', '2023', '2024'],
       required: true,
     },
     subject: {

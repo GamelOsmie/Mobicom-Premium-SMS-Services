@@ -24,6 +24,13 @@ export default function StatsOverview() {
 
               <div className='flex justify-between'>
                 <div className='text-center'>
+                  <p className='text-sm md:text-base text-primary'>2020</p>
+                  <p className='text-4xl  md:text-6xl'>
+                    {stats?.data?.subscriptions_today['2020']}
+                  </p>
+                </div>
+
+                <div className='text-center'>
                   <p className='text-sm md:text-base text-primary'>2021</p>
                   <p className='text-4xl  md:text-6xl'>
                     {stats?.data?.subscriptions_today['2021']}
@@ -58,6 +65,13 @@ export default function StatsOverview() {
               <p className='mb-5 md:mb-10'>Unsubscriptions Today</p>
 
               <div className='flex justify-between'>
+                <div className='text-center'>
+                  <p className='text-sm md:text-base text-primary'>2020</p>
+                  <p className='text-4xl  md:text-6xl'>
+                    {stats?.data?.unsubscriptions_today['2020']}
+                  </p>
+                </div>
+
                 <div className='text-center'>
                   <p className='text-sm md:text-base text-primary'>2021</p>
                   <p className='text-4xl  md:text-6xl'>

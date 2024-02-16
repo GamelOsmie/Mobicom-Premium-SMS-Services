@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const errorHandler = require('./middleware/error');
 
 // routes import
+const subscribers2020Route = require('./modules/subscribers_2020/subscribers.routes');
 const subscribers2021Route = require('./modules/subscribers_2021/subscribers.routes');
 const subscribers2022Route = require('./modules/subscribers_2022/subscribers.routes');
 const subscribers2023Route = require('./modules/subscribers_2023/subscribers.routes');
@@ -30,12 +31,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(cookieParser());
 app.use(helmet()),
-  app.use((req, res, next) => {
+app.use((req, res, next) => {
     console.log(req.method, req.path, res.statusCode);
 
     next();
-  });
+});
 
+
+app.use('/api/v1/2020', subscribers2020Route);
 app.use('/api/v1/2021', subscribers2021Route);
 app.use('/api/v1/2022', subscribers2022Route);
 app.use('/api/v1/2023', subscribers2023Route);

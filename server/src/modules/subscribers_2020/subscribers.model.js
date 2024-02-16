@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const Subscriber2022Schema = new Schema(
+const Subscriber2020Schema = new Schema(
   {
     msisdn_no: {
       type: String,
@@ -31,6 +31,6 @@ const Subscriber2022Schema = new Schema(
   },
 );
 
-const Subscriber2022 = mongoose.model('Subscriber2022', Subscriber2022Schema);
+const Subscriber2020 = mongoose.model('Subscriber2020', Subscriber2020Schema);
 
-module.exports = Subscriber2022;
+module.exports = Subscriber2020;
