@@ -18,6 +18,7 @@ smsDeliveryQueueFor2020.process(async (job, done) => {
     console.log(`SMS size : ${receivers.length}`);
     console.log(`start time : ${new Date().toLocaleString()}`);
     console.log('-----------------------------------------');
+    console.log(`message: ${message}`);
     let delivered = 0;
     let undelivered = 0;
 
@@ -39,7 +40,6 @@ smsDeliveryQueueFor2020.process(async (job, done) => {
                 sub.msisdn_no
               } at ${new Date().toLocaleString()}`,
             );
-            console.log(response.data)
           } else {
             undelivered += 1;
             console.log(`${sub.msisdn_no} delivery unsuccessful`);
