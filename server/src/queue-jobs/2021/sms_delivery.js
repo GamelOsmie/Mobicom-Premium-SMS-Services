@@ -40,6 +40,7 @@ smsDeliveryQueueFor2021.process(async (job, done) => {
                 sub.msisdn_no
               } at ${new Date().toLocaleString()}`,
             );
+            console.log(response.data);
           } else {
             undelivered += 1;
           }
