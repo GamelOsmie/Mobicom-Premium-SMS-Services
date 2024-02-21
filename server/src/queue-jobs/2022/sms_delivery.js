@@ -28,17 +28,18 @@ smsDeliveryQueueFor2022.process(async (job, done) => {
             SystemID: AFRICELL_SMS_API.system_id,
             Password: AFRICELL_SMS_API.password,
             Sender: '2022',
-            receiver: sub.msisdn_no,
+            Receiver: sub.msisdn_no,
             Message: message,
           });
 
           if (response.data.ResultCode == '200') {
             delivered += 1;
-            console.log(
-              `message deliver to ${
-                sub.msisdn_no
-              } at ${new Date().toLocaleString()}`,
-            );
+          console.log(
+            `message delivered to ${
+              sub.msisdn_no
+            } at ${new Date().toLocaleString()}`,
+          );
+          console.log(response.data);
           } else {
             undelivered += 1;
             console.log(`${sub.msisdn_no} delivery unsuccessful`);
