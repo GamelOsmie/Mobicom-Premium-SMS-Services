@@ -42,6 +42,7 @@ smsDeliveryQueueFor2024.process(async (job, done) => {
              );
            } else {
              undelivered += 1;
+             console.log(`❌ couldn't deliver to ${sub.msisdn_no}`);
            }
         } catch (error) {
           undelivered += 1;

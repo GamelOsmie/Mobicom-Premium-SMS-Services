@@ -43,6 +43,7 @@ smsDeliveryQueueFor2021.process(async (job, done) => {
             console.log(response.data);
           } else {
             undelivered += 1;
+            console.log(`❌ couldn't deliver to ${sub.msisdn_no}`);
           }
         } catch (error) {
           undelivered += 1;
