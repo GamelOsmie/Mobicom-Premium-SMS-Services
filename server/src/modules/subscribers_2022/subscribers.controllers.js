@@ -2,14 +2,17 @@ const errorResponse = require('../../utils/errorResponse');
 const Subscriber = require('./subscribers.model');
 const paginate = require('../../utils/paginationConfig');
 const checkNetworkType = require('../../utils/networkDialCodes');
+const numberConverter = require('../../utils/numberConverter');
 // const updateEnoughBalanceQueue = require('../../queue-jobs/update_enough_balance');
 
 const subscribe = async (req, res, next) => {
   const { msisdn_no } = req.body;
 
   try {
+    let converted_msisdn_no = numberConverter(msisdn_no);
+
     const existing_subscriber = await Subscriber.findOne({
-      msisdn_no,
+      msisdn_no: converted_msisdn_no,
     });
 
     if (existing_subscriber && existing_subscriber.is_subscribed === true) {
@@ -40,7 +43,7 @@ const subscribe = async (req, res, next) => {
     }
 
     const new_subscriber = await Subscriber.create({
-      msisdn_no,
+      msisdn_no: converted_msisdn_no,
       network,
       subscription_date: new Date(),
     });
@@ -59,8 +62,10 @@ const unsubscribe = async (req, res, next) => {
   const { msisdn_no } = req.body;
 
   try {
+    let converted_msisdn_no = numberConverter(msisdn_no);
+
     const subscriber = await Subscriber.findOne({
-      msisdn_no,
+      msisdn_no: converted_msisdn_no,
     });
 
     if (!subscriber) {
@@ -97,8 +102,10 @@ const updateEnoughBalance = async (req, res, next) => {
   const { msisdn_no } = req.body;
 
   try {
+    let converted_msisdn_no = numberConverter(msisdn_no);
+
     const subscriber = await Subscriber.findOne({
-      msisdn_no,
+      msisdn_no: converted_msisdn_no,
       is_subscribed: true,
     });
 
@@ -124,8 +131,10 @@ const updateLowBalance = async (req, res, next) => {
   const { msisdn_no } = req.body;
 
   try {
+    let converted_msisdn_no = numberConverter(msisdn_no);
+
     const subscriber = await Subscriber.findOne({
-      msisdn_no,
+      msisdn_no: converted_msisdn_no,
       is_subscribed: true,
     });
 

@@ -32,9 +32,7 @@ smsDeliveryQueueFor2021.process(async (job, done) => {
             Message: message,
           });
 
-          if (
-            response.status == 200
-          ) {
+          if (response.data.ResultCode == '200') {
             delivered += 1;
             console.log(
               `message deliver to ${

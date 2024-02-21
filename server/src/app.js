@@ -36,7 +36,7 @@ app.use(helmet()),
 
     res.setHeader(
       'Content-Security-Policy',
-      "default-src 'self'; connect-src 'self' *; style-src-elem 'self' https://fonts.googleapis.com; style-src 'self' https://fonts.googleapis.com;",
+      "default-src 'self'; connect-src 'self' *; style-src-elem 'self' https://fonts.googleapis.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.googleapis.com;",
     );
 
     next();

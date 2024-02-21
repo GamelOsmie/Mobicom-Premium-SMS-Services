@@ -32,19 +32,17 @@ smsDeliveryQueueFor2024.process(async (job, done) => {
             Message: message,
           });
 
-          if (
-            response.status == 200 
-          ) {
-            delivered += 1;
-            console.log(
-              `message deliver to ${
-                sub.msisdn_no
-              } at ${new Date().toLocaleString()}`,
-            );
-          } else {
-            undelivered += 1;
-            console.log(`${sub.msisdn_no} delivery unsuccessful`);
-          }
+           if (response.data.ResultCode == '200') {
+             delivered += 1;
+             console.log(
+               `message deliver to ${
+                 sub.msisdn_no
+               } at ${new Date().toLocaleString()}`,
+             );
+           } else {
+             undelivered += 1;
+             console.log(`${sub.msisdn_no} delivery unsuccessful`);
+           }
         } catch (error) {
           undelivered += 1;
           console.log(`${sub.msisdn_no} delivery error:`, error.message);

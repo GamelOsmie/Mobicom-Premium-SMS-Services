@@ -173,7 +173,7 @@ function PageBody() {
           <select
             id='publication_status'
             className='input w-full'
-            value='draft'
+            defaultValue='draft'
             {...register('publication_status', { required: true })}
           >
             <option value='draft'>Draft</option>
