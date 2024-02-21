@@ -18,7 +18,7 @@ smsDeliveryQueueFor2023.process(async (job, done) => {
     console.log(`SMS size : ${receivers.length}`);
     console.log(`start time : ${new Date().toLocaleString()}`);
     console.log('-----------------------------------------');
-    console.log(`message: ${message}`);
+    console.log(`✉️ message: ${message}`);
     let delivered = 0;
     let undelivered = 0;
 
@@ -36,17 +36,16 @@ smsDeliveryQueueFor2023.process(async (job, done) => {
           if (response.data.ResultCode == '200') {
             delivered += 1;
             console.log(
-              `message delivered to ${
+              `✅ delivered to ${
                 sub.msisdn_no
               } at ${new Date().toLocaleString()}`,
             );
           } else {
             undelivered += 1;
-            console.log(`${sub.msisdn_no} delivery unsuccessful`);
           }
         } catch (error) {
           undelivered += 1;
-          console.log(`${sub.msisdn_no} delivery error:`, error.message);
+          console.log(`❌ ${sub.msisdn_no} delivery error:`, error.message);
         }
       }),
     );
