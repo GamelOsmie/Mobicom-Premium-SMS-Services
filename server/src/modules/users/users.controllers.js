@@ -22,6 +22,11 @@ const createUser = async (req, res, next) => {
     email,
     phone_number,
     password,
+    has_2020_access,
+    has_2021_access,
+    has_2022_access,
+    has_2023_access,
+    has_2024_access,
   } = req.body;
 
   try {
@@ -34,6 +39,11 @@ const createUser = async (req, res, next) => {
       email,
       phone_number,
       password,
+      has_2020_access,
+      has_2021_access,
+      has_2022_access,
+      has_2023_access,
+      has_2024_access,
     );
 
     return res.status(201).json({
@@ -82,6 +92,11 @@ const login = async (req, res, next) => {
       is_active,
       verified,
       slug,
+      has_2020_access,
+      has_2021_access,
+      has_2022_access,
+      has_2023_access,
+      has_2024_access,
     } = user;
 
     //create sign in token from jwt
@@ -115,6 +130,11 @@ const login = async (req, res, next) => {
           is_active,
           verified,
           slug,
+          has_2020_access,
+          has_2021_access,
+          has_2022_access,
+          has_2023_access,
+          has_2024_access,
         },
       });
   } catch (error) {
@@ -297,6 +317,11 @@ const updateUser = async (req, res, next) => {
     email,
     phone_number,
     is_active,
+    has_2020_access,
+    has_2021_access,
+    has_2022_access,
+    has_2023_access,
+    has_2024_access,
   } = req.body;
 
   //check if user is Super Admin and restrict editing a super admin or another admin
@@ -330,6 +355,11 @@ const updateUser = async (req, res, next) => {
         email,
         phone_number,
         is_active,
+        has_2020_access,
+        has_2021_access,
+        has_2022_access,
+        has_2023_access,
+        has_2024_access,
       },
       { new: true },
     );
@@ -346,6 +376,11 @@ const updateUser = async (req, res, next) => {
         middle_name: user.middle_name,
         email: user.email,
         phone_number: user.phone_number,
+        has_2020_access: user.has_2020_access,
+        has_2021_access: user.has_2021_access,
+        has_2022_access: user.has_2022_access,
+        has_2023_access: user.has_2023_access,
+        has_2024_access: user.has_2024_access,
       },
     });
   } catch (error) {
@@ -364,14 +399,8 @@ const updateUser = async (req, res, next) => {
 // ACCESS | Self
 const updateSelf = async (req, res, next) => {
   const { _id } = req.user;
-  const {
-    username,
-    first_name,
-    last_name,
-    middle_name,
-    email,
-    phone_number,
-  } = req.body;
+  const { username, first_name, last_name, middle_name, email, phone_number } =
+    req.body;
 
   try {
     const user = await User.findOneAndUpdate(
@@ -452,7 +481,7 @@ const updatePassword = async (req, res, next) => {
     return res.status(200).json({
       status: 'success',
       message: 'Password changed successfully',
-      data: null
+      data: null,
     });
   } catch (error) {
     next(errorResponse(400, error.message));

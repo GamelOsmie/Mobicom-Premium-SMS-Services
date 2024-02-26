@@ -43,7 +43,6 @@ const createBalanceStatusUpdateRecord = async (req, res, next) => {
 
 const dashboardOverview = async (req, res, next) => {
   try {
-
     const currentDate = new Date();
 
     // Get the start and end of the current day
@@ -57,7 +56,6 @@ const dashboardOverview = async (req, res, next) => {
       currentDate.getMonth(),
       currentDate.getDate() + 1,
     );
-
 
     // subscriptions today
     const subs2020 = await Subscriber2020.countDocuments({
@@ -94,7 +92,7 @@ const dashboardOverview = async (req, res, next) => {
 
     const subs2024 = await Subscriber2024.countDocuments({
       subscription_date: {
-         $gte: startOfDay,
+        $gte: startOfDay,
         $lt: endOfDay,
       },
       is_subscribed: true,
@@ -254,7 +252,14 @@ const dashboardOverview = async (req, res, next) => {
 };
 
 const creatorOverview = async (req, res, next) => {
-  const { _id } = req.user;
+  const {
+    _id,
+    has_2020_access,
+    has_2021_access,
+    has_2022_access,
+    has_2023_access,
+    has_2024_access,
+  } = req.user;
 
   try {
     const published = await Content.countDocuments({
@@ -265,21 +270,52 @@ const creatorOverview = async (req, res, next) => {
       author: _id,
       publication_status: 'draft',
     });
-    const approved = await Content.countDocuments({
-      author: _id,
-      publication_status: 'published',
-      approval_status: 'approved',
-    });
-    const pending = await Content.countDocuments({
-      author: _id,
-      publication_status: 'published',
-      approval_status: 'pending',
-    });
-    const rejected = await Content.countDocuments({
-      author: _id,
-      publication_status: 'published',
-      approval_status: 'rejected',
-    });
+
+    let content_for_2020 = 0;
+    let content_for_2021 = 0;
+    let content_for_2022 = 0;
+    let content_for_2023 = 0;
+    let content_for_2024 = 0;
+
+    if (has_2020_access) {
+      content_for_2020 = await Content.countDocuments({
+        author: _id,
+        publication_status: 'published',
+        category: '2020',
+      });
+    }
+
+    if (has_2021_access) {
+      content_for_2021 = await Content.countDocuments({
+        author: _id,
+        publication_status: 'published',
+        category: '2021',
+      });
+    }
+
+    if (has_2022_access) {
+      content_for_2022 = await Content.countDocuments({
+        author: _id,
+        publication_status: 'published',
+        category: '2022',
+      });
+    }
+
+    if (has_2023_access) {
+      content_for_2023 = await Content.countDocuments({
+        author: _id,
+        publication_status: 'published',
+        category: '2023',
+      });
+    }
+
+    if (has_2024_access) {
+      content_for_2024 = await Content.countDocuments({
+        author: _id,
+        publication_status: 'published',
+        category: '2024',
+      });
+    }
 
     const recent_contents = await Content.find({
       author: _id,
@@ -287,16 +323,779 @@ const creatorOverview = async (req, res, next) => {
       .sort({ updated_at: -1 })
       .limit(3);
 
+    // Get the start and end of the current day
+    const currentDate = new Date();
+
+    const startOfDay = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate(),
+    );
+    const endOfDay = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate() + 1,
+    );
+
+    const startOfWeek = new Date(currentDate);
+    startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+    const startOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1,
+    );
+    const endOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0,
+    );
+
+    const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
+    const endOfYear = new Date(currentDate.getFullYear(), 11, 31);
+
+    let subscribers_for_2020_this_week = 0;
+    let subscribers_for_2020_this_month = 0;
+    let subscribers_for_2020_this_year = 0;
+    let subscribers_for_2020_overall = 0;
+
+    let unsubscribers_for_2020_this_year = 0;
+    let unsubscribers_for_2020_this_week = 0;
+    let unsubscribers_for_2020_this_month = 0;
+    let unsubscribers_for_2020_overall = 0;
+
+    let deliveries_for_2020_today = 0;
+    let deliveries_for_2020_this_week = 0;
+    let deliveries_for_2020_this_month = 0;
+    let deliveries_for_2020_this_year = 0;
+
+    let subscribers_for_2021_this_week = 0;
+    let subscribers_for_2021_this_month = 0;
+    let subscribers_for_2021_this_year = 0;
+    let subscribers_for_2021_overall = 0;
+
+    let unsubscribers_for_2021_this_year = 0;
+    let unsubscribers_for_2021_this_week = 0;
+    let unsubscribers_for_2021_this_month = 0;
+    let unsubscribers_for_2021_overall = 0;
+
+    let deliveries_for_2021_today = 0;
+    let deliveries_for_2021_this_week = 0;
+    let deliveries_for_2021_this_month = 0;
+    let deliveries_for_2021_this_year = 0;
+
+    let subscribers_for_2022_this_week = 0;
+    let subscribers_for_2022_this_month = 0;
+    let subscribers_for_2022_this_year = 0;
+    let subscribers_for_2022_overall = 0;
+
+    let unsubscribers_for_2022_this_year = 0;
+    let unsubscribers_for_2022_this_week = 0;
+    let unsubscribers_for_2022_this_month = 0;
+    let unsubscribers_for_2022_overall = 0;
+
+    let deliveries_for_2022_today = 0;
+    let deliveries_for_2022_this_week = 0;
+    let deliveries_for_2022_this_month = 0;
+    let deliveries_for_2022_this_year = 0;
+
+    let subscribers_for_2023_this_week = 0;
+    let subscribers_for_2023_this_month = 0;
+    let subscribers_for_2023_this_year = 0;
+    let subscribers_for_2023_overall = 0;
+
+    let unsubscribers_for_2023_this_year = 0;
+    let unsubscribers_for_2023_this_week = 0;
+    let unsubscribers_for_2023_this_month = 0;
+    let unsubscribers_for_2023_overall = 0;
+
+    let deliveries_for_2023_today = 0;
+    let deliveries_for_2023_this_week = 0;
+    let deliveries_for_2023_this_month = 0;
+    let deliveries_for_2023_this_year = 0;
+
+    let subscribers_for_2024_this_week = 0;
+    let subscribers_for_2024_this_month = 0;
+    let subscribers_for_2024_this_year = 0;
+    let subscribers_for_2024_overall = 0;
+
+    let unsubscribers_for_2024_this_year = 0;
+    let unsubscribers_for_2024_this_week = 0;
+    let unsubscribers_for_2024_this_month = 0;
+    let unsubscribers_for_2024_overall = 0;
+
+    let deliveries_for_2024_today = 0;
+    let deliveries_for_2024_this_week = 0;
+    let deliveries_for_2024_this_month = 0;
+    let deliveries_for_2024_this_year = 0;
+
+    if (has_2020_access) {
+      // deliveries
+      let deliveries_for_2020_today_list = await SMSDeliveryRecord2020.find({
+        created_at: {
+          $gte: startOfDay,
+          $lt: endOfDay,
+        },
+      });
+
+      deliveries_for_2020_today_list.forEach(
+        (delivery) => (deliveries_for_2020_today += delivery.delivered),
+      );
+
+      let deliveries_for_2020_this_week_list = await SMSDeliveryRecord2020.find(
+        {
+          created_at: {
+            $gte: startOfWeek,
+            $lt: endOfWeek,
+          },
+        },
+      );
+
+      deliveries_for_2020_this_week_list.forEach(
+        (delivery) => (deliveries_for_2020_this_week += delivery.delivered),
+      );
+
+      let deliveries_for_2020_this_month_list =
+        await SMSDeliveryRecord2020.find({
+          created_at: {
+            $gte: startOfMonth,
+            $lt: endOfMonth,
+          },
+        });
+
+      deliveries_for_2020_this_month_list.forEach(
+        (delivery) => (deliveries_for_2020_this_month += delivery.delivered),
+      );
+
+      let deliveries_for_2020_this_year_list = await SMSDeliveryRecord2020.find(
+        {
+          created_at: {
+            $gte: startOfYear,
+            $lt: endOfYear,
+          },
+        },
+      );
+
+      deliveries_for_2020_this_year_list.forEach(
+        (delivery) => (deliveries_for_2020_this_year += delivery.delivered),
+      );
+
+      // subs stats
+      subscribers_for_2020_this_week = await Subscriber2020.countDocuments({
+        subscription_date: {
+          $gte: startOfWeek,
+          $lt: endOfWeek,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2020_this_month = await Subscriber2020.countDocuments({
+        subscription_date: {
+          $gte: startOfMonth,
+          $lt: endOfMonth,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2020_this_year = await Subscriber2020.countDocuments({
+        subscription_date: {
+          $gte: startOfYear,
+          $lt: endOfYear,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2020_overall = await Subscriber2020.countDocuments({
+        is_subscribed: true,
+      });
+
+      // unsub stats
+      unsubscribers_for_2020_this_week = await Subscriber2020.countDocuments({
+        subscription_date: {
+          $gte: startOfWeek,
+          $lt: endOfWeek,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2020_this_month = await Subscriber2020.countDocuments({
+        subscription_date: {
+          $gte: startOfMonth,
+          $lt: endOfMonth,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2020_this_year = await Subscriber2020.countDocuments({
+        subscription_date: {
+          $gte: startOfYear,
+          $lt: endOfYear,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2020_overall = await Subscriber2020.countDocuments({
+        is_subscribed: false,
+      });
+    }
+
+    if (has_2021_access) {
+      // deliveries
+      let deliveries_for_2021_today_list = await SMSDeliveryRecord2021.find({
+        created_at: {
+          $gte: startOfDay,
+          $lt: endOfDay,
+        },
+      });
+
+      deliveries_for_2021_today_list.forEach(
+        (delivery) => (deliveries_for_2021_today += delivery.delivered),
+      );
+
+      let deliveries_for_2021_this_week_list = await SMSDeliveryRecord2021.find(
+        {
+          created_at: {
+            $gte: startOfWeek,
+            $lt: endOfWeek,
+          },
+        },
+      );
+
+      deliveries_for_2021_this_week_list.forEach(
+        (delivery) => (deliveries_for_2021_this_week += delivery.delivered),
+      );
+
+      let deliveries_for_2021_this_month_list =
+        await SMSDeliveryRecord2021.find({
+          created_at: {
+            $gte: startOfMonth,
+            $lt: endOfMonth,
+          },
+        });
+
+      deliveries_for_2021_this_month_list.forEach(
+        (delivery) => (deliveries_for_2021_this_month += delivery.delivered),
+      );
+
+      let deliveries_for_2021_this_year_list = await SMSDeliveryRecord2021.find(
+        {
+          created_at: {
+            $gte: startOfYear,
+            $lt: endOfYear,
+          },
+        },
+      );
+
+      deliveries_for_2021_this_year_list.forEach(
+        (delivery) => (deliveries_for_2021_this_year += delivery.delivered),
+      );
+
+      // subs stats
+      subscribers_for_2021_this_week = await Subscriber2021.countDocuments({
+        subscription_date: {
+          $gte: startOfWeek,
+          $lt: endOfWeek,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2021_this_month = await Subscriber2021.countDocuments({
+        subscription_date: {
+          $gte: startOfMonth,
+          $lt: endOfMonth,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2021_this_year = await Subscriber2021.countDocuments({
+        subscription_date: {
+          $gte: startOfYear,
+          $lt: endOfYear,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2021_overall = await Subscriber2021.countDocuments({
+        is_subscribed: true,
+      });
+
+      // unsub stats
+      unsubscribers_for_2021_this_week = await Subscriber2021.countDocuments({
+        subscription_date: {
+          $gte: startOfWeek,
+          $lt: endOfWeek,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2021_this_month = await Subscriber2021.countDocuments({
+        subscription_date: {
+          $gte: startOfMonth,
+          $lt: endOfMonth,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2021_this_year = await Subscriber2021.countDocuments({
+        subscription_date: {
+          $gte: startOfYear,
+          $lt: endOfYear,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2021_overall = await Subscriber2021.countDocuments({
+        is_subscribed: false,
+      });
+    }
+
+    if (has_2022_access) {
+      // deliveries
+      let deliveries_for_2022_today_list = await SMSDeliveryRecord2022.find({
+        created_at: {
+          $gte: startOfDay,
+          $lt: endOfDay,
+        },
+      });
+
+      deliveries_for_2022_today_list.forEach(
+        (delivery) => (deliveries_for_2022_today += delivery.delivered),
+      );
+
+      let deliveries_for_2022_this_week_list = await SMSDeliveryRecord2022.find(
+        {
+          created_at: {
+            $gte: startOfWeek,
+            $lt: endOfWeek,
+          },
+        },
+      );
+
+      deliveries_for_2022_this_week_list.forEach(
+        (delivery) => (deliveries_for_2022_this_week += delivery.delivered),
+      );
+
+      let deliveries_for_2022_this_month_list =
+        await SMSDeliveryRecord2022.find({
+          created_at: {
+            $gte: startOfMonth,
+            $lt: endOfMonth,
+          },
+        });
+
+      deliveries_for_2022_this_month_list.forEach(
+        (delivery) => (deliveries_for_2022_this_month += delivery.delivered),
+      );
+
+      let deliveries_for_2022_this_year_list = await SMSDeliveryRecord2022.find(
+        {
+          created_at: {
+            $gte: startOfYear,
+            $lt: endOfYear,
+          },
+        },
+      );
+
+      deliveries_for_2022_this_year_list.forEach(
+        (delivery) => (deliveries_for_2022_this_year += delivery.delivered),
+      );
+
+      // subs stats
+      subscribers_for_2022_this_week = await Subscriber2022.countDocuments({
+        subscription_date: {
+          $gte: startOfWeek,
+          $lt: endOfWeek,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2022_this_month = await Subscriber2022.countDocuments({
+        subscription_date: {
+          $gte: startOfMonth,
+          $lt: endOfMonth,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2022_this_year = await Subscriber2022.countDocuments({
+        subscription_date: {
+          $gte: startOfYear,
+          $lt: endOfYear,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2022_overall = await Subscriber2022.countDocuments({
+        is_subscribed: true,
+      });
+
+      // unsub stats
+      unsubscribers_for_2022_this_week = await Subscriber2022.countDocuments({
+        subscription_date: {
+          $gte: startOfWeek,
+          $lt: endOfWeek,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2022_this_month = await Subscriber2022.countDocuments({
+        subscription_date: {
+          $gte: startOfMonth,
+          $lt: endOfMonth,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2022_this_year = await Subscriber2022.countDocuments({
+        subscription_date: {
+          $gte: startOfYear,
+          $lt: endOfYear,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2022_overall = await Subscriber2022.countDocuments({
+        is_subscribed: false,
+      });
+    }
+
+    if (has_2023_access) {
+      // deliveries
+      let deliveries_for_2023_today_list = await SMSDeliveryRecord2023.find({
+        created_at: {
+          $gte: startOfDay,
+          $lt: endOfDay,
+        },
+      });
+
+      deliveries_for_2023_today_list.forEach(
+        (delivery) => (deliveries_for_2023_today += delivery.delivered),
+      );
+
+      let deliveries_for_2023_this_week_list = await SMSDeliveryRecord2023.find(
+        {
+          created_at: {
+            $gte: startOfWeek,
+            $lt: endOfWeek,
+          },
+        },
+      );
+
+      deliveries_for_2023_this_week_list.forEach(
+        (delivery) => (deliveries_for_2023_this_week += delivery.delivered),
+      );
+
+      let deliveries_for_2023_this_month_list =
+        await SMSDeliveryRecord2023.find({
+          created_at: {
+            $gte: startOfMonth,
+            $lt: endOfMonth,
+          },
+        });
+
+      deliveries_for_2023_this_month_list.forEach(
+        (delivery) => (deliveries_for_2023_this_month += delivery.delivered),
+      );
+
+      let deliveries_for_2023_this_year_list = await SMSDeliveryRecord2023.find(
+        {
+          created_at: {
+            $gte: startOfYear,
+            $lt: endOfYear,
+          },
+        },
+      );
+
+      deliveries_for_2023_this_year_list.forEach(
+        (delivery) => (deliveries_for_2023_this_year += delivery.delivered),
+      );
+
+      // subs stats
+      subscribers_for_2023_this_week = await Subscriber2023.countDocuments({
+        subscription_date: {
+          $gte: startOfWeek,
+          $lt: endOfWeek,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2023_this_month = await Subscriber2023.countDocuments({
+        subscription_date: {
+          $gte: startOfMonth,
+          $lt: endOfMonth,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2023_this_year = await Subscriber2023.countDocuments({
+        subscription_date: {
+          $gte: startOfYear,
+          $lt: endOfYear,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2023_overall = await Subscriber2023.countDocuments({
+        is_subscribed: true,
+      });
+
+      // unsub stats
+      unsubscribers_for_2023_this_week = await Subscriber2023.countDocuments({
+        subscription_date: {
+          $gte: startOfWeek,
+          $lt: endOfWeek,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2023_this_month = await Subscriber2023.countDocuments({
+        subscription_date: {
+          $gte: startOfMonth,
+          $lt: endOfMonth,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2023_this_year = await Subscriber2023.countDocuments({
+        subscription_date: {
+          $gte: startOfYear,
+          $lt: endOfYear,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2023_overall = await Subscriber2023.countDocuments({
+        is_subscribed: false,
+      });
+    }
+
+    if (has_2024_access) {
+      // deliveries
+      let deliveries_for_2024_today_list = await SMSDeliveryRecord2024.find({
+        created_at: {
+          $gte: startOfDay,
+          $lt: endOfDay,
+        },
+      });
+
+      deliveries_for_2024_today_list.forEach(
+        (delivery) => (deliveries_for_2024_today += delivery.delivered),
+      );
+
+      let deliveries_for_2024_this_week_list = await SMSDeliveryRecord2024.find(
+        {
+          created_at: {
+            $gte: startOfWeek,
+            $lt: endOfWeek,
+          },
+        },
+      );
+
+      deliveries_for_2024_this_week_list.forEach(
+        (delivery) => (deliveries_for_2024_this_week += delivery.delivered),
+      );
+
+      let deliveries_for_2024_this_month_list =
+        await SMSDeliveryRecord2023.find({
+          created_at: {
+            $gte: startOfMonth,
+            $lt: endOfMonth,
+          },
+        });
+
+      deliveries_for_2024_this_month_list.forEach(
+        (delivery) => (deliveries_for_2024_this_month += delivery.delivered),
+      );
+
+      let deliveries_for_2024_this_year_list = await SMSDeliveryRecord2024.find(
+        {
+          created_at: {
+            $gte: startOfYear,
+            $lt: endOfYear,
+          },
+        },
+      );
+
+      deliveries_for_2024_this_year_list.forEach(
+        (delivery) => (deliveries_for_2024_this_year += delivery.delivered),
+      );
+
+      // subs stats
+      subscribers_for_2024_this_week = await Subscriber2024.countDocuments({
+        subscription_date: {
+          $gte: startOfWeek,
+          $lt: endOfWeek,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2024_this_month = await Subscriber2024.countDocuments({
+        subscription_date: {
+          $gte: startOfMonth,
+          $lt: endOfMonth,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2024_this_year = await Subscriber2024.countDocuments({
+        subscription_date: {
+          $gte: startOfYear,
+          $lt: endOfYear,
+        },
+        is_subscribed: true,
+      });
+
+      subscribers_for_2024_overall = await Subscriber2024.countDocuments({
+        is_subscribed: true,
+      });
+
+      // unsub stats
+      unsubscribers_for_2024_this_week = await Subscriber2024.countDocuments({
+        subscription_date: {
+          $gte: startOfWeek,
+          $lt: endOfWeek,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2024_this_month = await Subscriber2024.countDocuments({
+        subscription_date: {
+          $gte: startOfMonth,
+          $lt: endOfMonth,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2024_this_year = await Subscriber2024.countDocuments({
+        subscription_date: {
+          $gte: startOfYear,
+          $lt: endOfYear,
+        },
+        is_subscribed: false,
+      });
+
+      unsubscribers_for_2024_overall = await Subscriber2024.countDocuments({
+        is_subscribed: false,
+      });
+    }
+
     return res.json({
       status: 'success',
       message: 'Overview fetched successfully',
       data: {
-        published,
-        draft,
-        approved,
-        pending,
-        rejected,
+        content_overview: {
+          published,
+          draft,
+          content_for_2020,
+          content_for_2021,
+          content_for_2022,
+          content_for_2023,
+          content_for_2024,
+        },
         recent_contents,
+        performance_for_2020: {
+          subscribers: {
+            subscribers_for_2020_this_week,
+            subscribers_for_2020_this_month,
+            subscribers_for_2020_this_year,
+            subscribers_for_2020_overall,
+          },
+          unsubscribers: {
+            unsubscribers_for_2020_this_week,
+            unsubscribers_for_2020_this_month,
+            unsubscribers_for_2020_this_year,
+            unsubscribers_for_2020_overall,
+          },
+          deliveries: {
+            deliveries_for_2020_today,
+            deliveries_for_2020_this_week,
+            deliveries_for_2020_this_month,
+            deliveries_for_2020_this_year,
+          },
+        },
+        performance_for_2021: {
+          subscribers: {
+            subscribers_for_2021_this_week,
+            subscribers_for_2021_this_month,
+            subscribers_for_2021_this_year,
+            subscribers_for_2021_overall,
+          },
+          unsubscribers: {
+            unsubscribers_for_2021_this_week,
+            unsubscribers_for_2021_this_month,
+            unsubscribers_for_2021_this_year,
+            unsubscribers_for_2021_overall,
+          },
+          deliveries: {
+            deliveries_for_2021_today,
+            deliveries_for_2021_this_week,
+            deliveries_for_2021_this_month,
+            deliveries_for_2021_this_year,
+          },
+        },
+        performance_for_2022: {
+          subscribers: {
+            subscribers_for_2022_this_week,
+            subscribers_for_2022_this_month,
+            subscribers_for_2022_this_year,
+            subscribers_for_2022_overall,
+          },
+          unsubscribers: {
+            unsubscribers_for_2022_this_week,
+            unsubscribers_for_2022_this_month,
+            unsubscribers_for_2022_this_year,
+            unsubscribers_for_2022_overall,
+          },
+          deliveries: {
+            deliveries_for_2022_today,
+            deliveries_for_2022_this_week,
+            deliveries_for_2022_this_month,
+            deliveries_for_2022_this_year,
+          },
+        },
+        performance_for_2023: {
+          subscribers: {
+            subscribers_for_2023_this_week,
+            subscribers_for_2023_this_month,
+            subscribers_for_2023_this_year,
+            subscribers_for_2023_overall,
+          },
+          unsubscribers: {
+            unsubscribers_for_2023_this_week,
+            unsubscribers_for_2023_this_month,
+            unsubscribers_for_2023_this_year,
+            unsubscribers_for_2023_overall,
+          },
+          deliveries: {
+            deliveries_for_2023_today,
+            deliveries_for_2023_this_week,
+            deliveries_for_2023_this_month,
+            deliveries_for_2023_this_year,
+          },
+        },
+        performance_for_2024: {
+          subscribers: {
+            subscribers_for_2024_this_week,
+            subscribers_for_2024_this_month,
+            subscribers_for_2024_this_year,
+            subscribers_for_2024_overall,
+          },
+          unsubscribers: {
+            unsubscribers_for_2024_this_week,
+            unsubscribers_for_2024_this_month,
+            unsubscribers_for_2024_this_year,
+            unsubscribers_for_2024_overall,
+          },
+          deliveries: {
+            deliveries_for_2024_today,
+            deliveries_for_2024_this_week,
+            deliveries_for_2024_this_month,
+            deliveries_for_2024_this_year,
+          },
+        },
       },
     });
   } catch (error) {

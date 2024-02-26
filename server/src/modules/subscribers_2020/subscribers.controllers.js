@@ -156,23 +156,24 @@ const updateLowBalance = async (req, res, next) => {
 };
 
 const getAllSubscribers = async (req, res, next) => {
-  // const pageSize = 150;
-  // const pageNum = parseInt(req.query.page) || 1;
-  // const offset = pageSize * (pageNum - 1);
+  const pageSize = 150;
+  const pageNum = parseInt(req.query.page) || 1;
+  const offset = pageSize * (pageNum - 1);
 
   try {
-    const subscribers = await Subscriber.find({ is_subscribed: true }).lean();
-    // .skip(offset)
-    // .limit(pageSize);
+    const subscribers = await Subscriber.find({ is_subscribed: true })
+      .lean()
+      .skip(offset)
+      .limit(pageSize);
 
-    // const count = await Subscriber.countDocuments({ is_subscribed: true });
-    // const meta = paginate({ count, pageNum, pageSize, req });
+    const count = await Subscriber.countDocuments({ is_subscribed: true });
+    const meta = paginate({ count, pageNum, pageSize, req });
 
     return res.status(200).json({
       status: 'success',
       message: 'Subscribers fetched successfully',
       data: subscribers,
-      // meta,
+      meta,
     });
   } catch (error) {
     return next(errorResponse(400, error.message));
@@ -241,6 +242,55 @@ const getEnoughBalanceSubscribers = async (req, res, next) => {
   }
 };
 
+const getSMSTargetGroups = async (req, res, next) => {
+  try {
+    const all_subscribers = await Subscriber.countDocuments({
+      is_subscribed: true,
+    });
+    const all_low_balance = await Subscriber.countDocuments({
+      is_subscribed: true,
+      has_enough_balance: false,
+    });
+
+    const all_enough_balance = await Subscriber.countDocuments({
+      is_subscribed: true,
+      has_enough_balance: true,
+    });
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'SMS target groups fetched successfully',
+      data: {
+        all_subscribers,
+        all_low_balance,
+        all_enough_balance,
+      },
+    });
+  } catch (error) {
+    return next(errorResponse(400, error.message));
+  }
+};
+
+const searchSubscriber = async (req, res, next) => {
+  const { term } = req.body;
+
+  try {
+
+    const subscribers = await Subscriber.find({
+      is_subscribed: true,
+      msisdn_no: { $regex: term, $options: 'i' },
+    }).limit(10);
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Subscribers fetched successfully',
+      data: subscribers,
+    });
+  } catch (error) {
+    return next(errorResponse(400, error.message));
+  }
+};
+
 module.exports = {
   subscribe,
   unsubscribe,
@@ -249,4 +299,6 @@ module.exports = {
   getAllSubscribers,
   getLowBalanceSubscribers,
   getEnoughBalanceSubscribers,
+  getSMSTargetGroups,
+  searchSubscriber
 };

@@ -1,14 +1,16 @@
 import { useForm } from 'react-hook-form';
 import { CgDanger } from 'react-icons/cg';
 
+import { useSelector } from 'react-redux';
 import { useCreateContent } from '../../hooks/useContents';
 import NavItemsList from '../common/navItemsList';
+import { creatorMenuLinks } from '../content creator/menu';
 import Layout from '../global/layout';
 import { menuLinks } from './menu';
-import { creatorMenuLinks } from '../content creator/menu';
-import { useSelector } from 'react-redux';
 
 function PageBody() {
+  const { user } = useSelector((state) => state.user);
+
   const {
     register,
     handleSubmit,
@@ -17,7 +19,7 @@ function PageBody() {
     reset,
   } = useForm();
 
-  // monitor character limit 
+  // monitor character limit
   const message = watch('body');
   const title = watch('subject');
 
@@ -150,11 +152,15 @@ function PageBody() {
             className='input w-full'
             {...register('category', { required: true })}
           >
-            <option value='2020'>2020</option>
-            <option value='2021'>2021</option>
-            <option value='2022'>2022</option>
-            <option value='2023'>2023</option>
-            <option value='2024'>2024</option>
+            {user.has_2020_access && <option value='2020'>2020</option>}
+
+            {user.has_2021_access && <option value='2021'>2021</option>}
+
+            {user.has_2022_access && <option value='2022'>2022</option>}
+
+            {user.has_2023_access && <option value='2023'>2023</option>}
+
+            {user.has_2024_access && <option value='2024'>2024</option>}
           </select>
 
           <>

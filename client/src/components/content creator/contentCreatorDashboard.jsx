@@ -1,15 +1,21 @@
+import moment from 'moment';
 import React from 'react';
-import { AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
-import { BsDashCircle } from 'react-icons/bs';
 import { FaRegEdit } from 'react-icons/fa';
+import { FiSend } from 'react-icons/fi';
+import { IoMdTime } from 'react-icons/io';
 import { LuMessageSquarePlus } from 'react-icons/lu';
+import {
+  TbDeviceMobileMessage,
+  TbMessage2Minus,
+  TbMessage2Plus,
+  TbMessageCheck,
+} from 'react-icons/tb';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useGetCreatorStats } from '../../hooks/useStats';
 import NavItemsList from '../common/navItemsList';
 import Layout from '../global/layout';
 import { creatorMenuLinks } from './menu';
-import { IoMdTime } from 'react-icons/io';
-import moment from 'moment';
 
 const StatCard = ({ icon, label, number }) => {
   return (
@@ -22,9 +28,8 @@ const StatCard = ({ icon, label, number }) => {
   );
 };
 
-const contents = [];
-
 const PageBody = () => {
+  const { user } = useSelector((state) => state.user);
   const { data: stats, isLoading } = useGetCreatorStats();
 
   //fetch function to get all contents
@@ -51,41 +56,71 @@ const PageBody = () => {
       {/* Title, Search and Add Content ends*/}
 
       {!isLoading && (
-        <div>
-          <div className='mb-16'>
+        <div className='space-y-16'>
+          <div>
             <h2 className='mb-5'>Contents at a glance</h2>
-            <div className='grid md:grid-cols-3 lg:grid-cols-5 gap-5'>
+            <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
               <StatCard
                 icon={<LuMessageSquarePlus />}
                 label='Published'
-                number={stats?.data?.published}
+                number={stats?.data?.content_overview?.published}
               />
               <StatCard
                 icon={<FaRegEdit />}
                 label='Draft'
-                number={stats?.data?.draft}
-              />
-              <StatCard
-                icon={<AiOutlineLike />}
-                label='Approved'
-                number={stats?.data?.approved}
+                number={stats?.data?.content_overview?.draft}
               />
 
-              <StatCard
-                icon={<BsDashCircle />}
-                label='Pending'
-                number={stats?.data?.pending}
-              />
-              <StatCard
-                icon={<AiOutlineDislike />}
-                label='Rejected'
-                number={stats?.data?.rejected}
-              />
+              {user?.has_2020_access && (
+                <StatCard
+                  icon={<TbDeviceMobileMessage />}
+                  label='2020'
+                  number={stats?.data?.content_overview?.content_for_2020}
+                />
+              )}
+
+              {user?.has_2021_access && (
+                <StatCard
+                  icon={<TbDeviceMobileMessage />}
+                  label='2021'
+                  number={stats?.data?.content_overview?.content_for_2021}
+                />
+              )}
+
+              {user?.has_2022_access && (
+                <StatCard
+                  icon={<TbDeviceMobileMessage />}
+                  label='2022'
+                  number={stats?.data?.content_overview?.content_for_2022}
+                />
+              )}
+
+              {user?.has_2023_access && (
+                <StatCard
+                  icon={<TbDeviceMobileMessage />}
+                  label='2023'
+                  number={stats?.data?.content_overview?.content_for_2023}
+                />
+              )}
+
+              {user?.has_2024_access && (
+                <StatCard
+                  icon={<TbDeviceMobileMessage />}
+                  label='2024'
+                  number={stats?.data?.content_overview?.content_for_2024}
+                />
+              )}
             </div>
           </div>
 
           <div>
-            <h2 className='mb-5'>Recent Contents</h2>
+            <div className='flex justify-between items-center'>
+              <h2 className='mb-5'>Recent Contents</h2>
+
+              <Link to='/my-contents' className='text-primary text-xs'>
+                view all
+              </Link>
+            </div>
 
             <div className='grid gap-10 md:grid-cols-2 lg:grid-cols-3'>
               {stats?.data?.recent_contents?.map((content) => (
@@ -96,29 +131,14 @@ const PageBody = () => {
                   <div>
                     <div
                       className={`flex ${
-                        content?.publication_status == 'published'
-                          ? 'justify-between'
-                          : 'justify-end'
-                      } items-center mb-10`}
+                        user?.user_role == 'Content Creator' &&
+                        content.publication_status == 'published'
+                          ? 'mb-0'
+                          : 'mb-10'
+                      } items-center justify-end`}
                     >
-                      {content?.publication_status == 'published' && (
-                        <div>
-                          {content.approval_status == 'pending' && (
-                            <span className='pending-pill'>pending</span>
-                          )}
-
-                          {content.approval_status == 'approved' && (
-                            <span className='active-pill'>approved</span>
-                          )}
-
-                          {content.approval_status == 'rejected' && (
-                            <span className='inactive-pill'>rejected</span>
-                          )}
-                        </div>
-                      )}
-
                       {content.publication_status == 'draft' && (
-                        <Link to={`/my-contents/${content.slug}`}>
+                        <Link to={content.slug}>
                           <FaRegEdit className='text-blue-600 hover:text-blue-500 duration-500 text-xl' />
                         </Link>
                       )}
@@ -140,10 +160,662 @@ const PageBody = () => {
                     </div>
                     <p className='text-gray-400 mb-3'>{content.body}</p>
                   </div>
+
+                  {content.publication_status == 'published' && (
+                    <div>
+                      <hr className='mb-5' />
+                      <Link to={`/sms/${content.category}/${content.slug}`}>
+                        <div className='text-blue-600 hover:text-blue-500 flex justify-center items-center gap-1'>
+                          <FiSend />
+                          <span> blast sms </span>
+                        </div>
+                      </Link>
+                    </div>
+                  )}
                 </article>
               ))}
             </div>
           </div>
+
+          {user?.has_2020_access && (
+            <div>
+              <h2 className='mb-8 text-3xl'>2020 Performance</h2>
+              <div className='mb-8'>
+                <h2 className='mb-5'>SMS Deliveries</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='Today'
+                    number={
+                      stats?.data?.performance_for_2020?.deliveries
+                        ?.deliveries_for_2020_today
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2020?.deliveries
+                        ?.deliveries_for_2020_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2020?.deliveries
+                        ?.deliveries_for_2020_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2020?.deliveries
+                        ?.deliveries_for_2020_this_year
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className='mb-8'>
+                <h2 className='mb-5'>Subscriptions</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2020?.subscribers
+                        ?.subscribers_for_2020_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2020?.subscribers
+                        ?.subscribers_for_2020_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2020?.subscribers
+                        ?.subscribers_for_2020_this_year
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='Overall'
+                    number={
+                      stats?.data?.performance_for_2020?.subscribers
+                        ?.subscribers_for_2020_overall
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className='mb-8'>
+                <h2 className='mb-5'>Unsubscriptions</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2020?.unsubscribers
+                        ?.unsubscribers_for_2020_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2020?.unsubscribers
+                        ?.unsubscribers_for_2020_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2020?.unsubscribers
+                        ?.unsubscribers_for_2020_this_year
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='Overall'
+                    number={
+                      stats?.data?.performance_for_2020?.unsubscribers
+                        ?.unsubscribers_for_2020_overall
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {user?.has_2021_access && (
+            <div>
+              <h2 className='mb-8 text-3xl'>2021 Performance</h2>
+              <div className='mb-8'>
+                <h2 className='mb-5'>SMS Deliveries</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='Today'
+                    number={
+                      stats?.data?.performance_for_2021?.deliveries
+                        ?.deliveries_for_2021_today
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2021?.deliveries
+                        ?.deliveries_for_2021_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2021?.deliveries
+                        ?.deliveries_for_2021_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2021?.deliveries
+                        ?.deliveries_for_2021_this_year
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className='mb-8'>
+                <h2 className='mb-5'>Subscriptions</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2021?.subscribers
+                        ?.subscribers_for_2021_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2021?.subscribers
+                        ?.subscribers_for_2021_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2021?.subscribers
+                        ?.subscribers_for_2021_this_year
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='Overall'
+                    number={
+                      stats?.data?.performance_for_2021?.subscribers
+                        ?.subscribers_for_2021_overall
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className='mb-8'>
+                <h2 className='mb-5'>Unsubscriptions</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2021?.unsubscribers
+                        ?.unsubscribers_for_2021_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2021?.unsubscribers
+                        ?.unsubscribers_for_2021_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2021?.unsubscribers
+                        ?.unsubscribers_for_2021_this_year
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='Overall'
+                    number={
+                      stats?.data?.performance_for_2021?.unsubscribers
+                        ?.unsubscribers_for_2021_overall
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {user?.has_2022_access && (
+            <div>
+              <h2 className='mb-8 text-3xl'>2022 Performance</h2>
+              <div className='mb-8'>
+                <h2 className='mb-5'>SMS Deliveries</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='Today'
+                    number={
+                      stats?.data?.performance_for_2022?.deliveries
+                        ?.deliveries_for_2022_today
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2022?.deliveries
+                        ?.deliveries_for_2022_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2022?.deliveries
+                        ?.deliveries_for_2022_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2022?.deliveries
+                        ?.deliveries_for_2022_this_year
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className='mb-8'>
+                <h2 className='mb-5'>Subscriptions</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2022?.subscribers
+                        ?.subscribers_for_2022_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2022?.subscribers
+                        ?.subscribers_for_2022_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2022?.subscribers
+                        ?.subscribers_for_2022_this_year
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='Overall'
+                    number={
+                      stats?.data?.performance_for_2022?.subscribers
+                        ?.subscribers_for_2022_overall
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className='mb-8'>
+                <h2 className='mb-5'>Unsubscriptions</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2022?.unsubscribers
+                        ?.unsubscribers_for_2022_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2022?.unsubscribers
+                        ?.unsubscribers_for_2022_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2022?.unsubscribers
+                        ?.unsubscribers_for_2022_this_year
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='Overall'
+                    number={
+                      stats?.data?.performance_for_2022?.unsubscribers
+                        ?.unsubscribers_for_2022_overall
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {user?.has_2023_access && (
+            <div>
+              <h2 className='mb-8 text-3xl'>2023 Performance</h2>
+              <div className='mb-8'>
+                <h2 className='mb-5'>SMS Deliveries</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='Today'
+                    number={
+                      stats?.data?.performance_for_2023?.deliveries
+                        ?.deliveries_for_2023_today
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2023?.deliveries
+                        ?.deliveries_for_2023_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2023?.deliveries
+                        ?.deliveries_for_2023_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2023?.deliveries
+                        ?.deliveries_for_2023_this_year
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className='mb-8'>
+                <h2 className='mb-5'>Subscriptions</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2023?.subscribers
+                        ?.subscribers_for_2023_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2023?.subscribers
+                        ?.subscribers_for_2023_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2023?.subscribers
+                        ?.subscribers_for_2023_this_year
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='Overall'
+                    number={
+                      stats?.data?.performance_for_2023?.subscribers
+                        ?.subscribers_for_2023_overall
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className='mb-8'>
+                <h2 className='mb-5'>Unsubscriptions</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2023?.unsubscribers
+                        ?.unsubscribers_for_2023_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2023?.unsubscribers
+                        ?.unsubscribers_for_2023_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2023?.unsubscribers
+                        ?.unsubscribers_for_2023_this_year
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='Overall'
+                    number={
+                      stats?.data?.performance_for_2023?.unsubscribers
+                        ?.unsubscribers_for_2023_overall
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {user?.has_2024_access && (
+            <div>
+              <h2 className='mb-8 text-3xl'>2024 Performance</h2>
+              <div className='mb-8'>
+                <h2 className='mb-5'>SMS Deliveries</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='Today'
+                    number={
+                      stats?.data?.performance_for_2024?.deliveries
+                        ?.deliveries_for_2024_today
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2024?.deliveries
+                        ?.deliveries_for_2024_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2024?.deliveries
+                        ?.deliveries_for_2024_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessageCheck />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2024?.deliveries
+                        ?.deliveries_for_2024_this_year
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className='mb-8'>
+                <h2 className='mb-5'>Subscriptions</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2024?.subscribers
+                        ?.subscribers_for_2024_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2024?.subscribers
+                        ?.subscribers_for_2024_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2024?.subscribers
+                        ?.subscribers_for_2024_this_year
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Plus />}
+                    label='Overall'
+                    number={
+                      stats?.data?.performance_for_2024?.subscribers
+                        ?.subscribers_for_2024_overall
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className='mb-8'>
+                <h2 className='mb-5'>Unsubscriptions</h2>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-5'>
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Week'
+                    number={
+                      stats?.data?.performance_for_2024?.unsubscribers
+                        ?.unsubscribers_for_2024_this_week
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Month'
+                    number={
+                      stats?.data?.performance_for_2024?.unsubscribers
+                        ?.unsubscribers_for_2024_this_month
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='This Year'
+                    number={
+                      stats?.data?.performance_for_2024?.unsubscribers
+                        ?.unsubscribers_for_2024_this_year
+                    }
+                  />
+
+                  <StatCard
+                    icon={<TbMessage2Minus />}
+                    label='Overall'
+                    number={
+                      stats?.data?.performance_for_2024?.unsubscribers
+                        ?.unsubscribers_for_2024_overall
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

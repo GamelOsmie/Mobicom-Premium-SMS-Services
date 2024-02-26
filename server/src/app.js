@@ -5,6 +5,7 @@ require('helmet');
 const cors = require('cors');
 const { default: helmet } = require('helmet');
 const cookieParser = require('cookie-parser');
+const mysql = require('mysql');
 
 // error handler import
 const errorHandler = require('./middleware/error');
@@ -21,8 +22,10 @@ const apiKeysRoute = require('./modules/api-keys/api-keys.routes');
 const analyticsRoute = require('./modules/analytics/analytics.routes');
 const smsRoute = require('./modules/sms/sms.routes');
 
+
 // init express
 const app = express();
+
 
 // system middlewares
 app.use(cors({ credentials: true, origin: true }));

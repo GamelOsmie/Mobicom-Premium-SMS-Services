@@ -4,6 +4,6 @@ const permission = require('../../middleware/permission');
 const sendSMS = require('./sms.controller');
 const router = express.Router();
 
-router.post('/blast-sms', requireUserAuth, permission('Super Admin',  'Admin'), sendSMS);
+router.post('/blast-sms', requireUserAuth, sendSMS);
 
 module.exports = router;

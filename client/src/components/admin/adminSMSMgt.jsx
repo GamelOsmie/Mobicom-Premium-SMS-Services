@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react';
 import { FiSend } from 'react-icons/fi';
+import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useBlastSMS } from '../../hooks/useSMS';
-import { useFetchAllSubscribers } from '../../hooks/useSubscribers';
+import {
+  useFetchSMSTargetGroup,
+  useSearchSubscriber,
+} from '../../hooks/useSubscribers';
 import NavItemsList from '../common/navItemsList';
+import { creatorMenuLinks } from '../content creator/menu';
 import Layout from '../global/layout';
 import { menuLinks } from './menu';
 
@@ -12,9 +17,9 @@ function PageBody() {
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [subscribers, setSubscribers] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   const [recipientsCount, setRecipientsCount] = useState(0);
-  const [selectedGroup, setSelectedGroup] = useState();
+  const [selectedGroup, setSelectedGroup] = useState('');
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [group, setGroup] = useState({
     all_subscribers: false,
@@ -23,8 +28,21 @@ function PageBody() {
     list: [],
   });
 
-  const { data: subs, isLoading: gettingSubs } =
-    useFetchAllSubscribers(category);
+  const { data: targets } = useFetchSMSTargetGroup(category);
+
+  const { mutate: searchSubscriber, isLoading: gettingSubs } =
+    useSearchSubscriber({
+      category,
+      options: {
+        onSuccess: (response) => {
+          const { status, data } = response;
+
+          if (status == 'success') {
+            setSearchResults(data);
+          }
+        },
+      },
+    });
 
   const { mutate: sendSMS, isLoading: sendingSMS } = useBlastSMS({
     onSuccess: (response) => {
@@ -43,26 +61,45 @@ function PageBody() {
       group,
     };
 
+    console.log(data);
+
     sendSMS(data);
   };
 
+  // perform search
   useEffect(() => {
-    if (searchTerm.length >= 2) {
-      let searchResults = subs?.data?.filter((result) => {
-        return result.msisdn_no
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
-      });
-
-      setSubscribers(searchResults);
-    } else {
-      setSubscribers(subs?.data);
+    if (searchTerm.startsWith('232') && searchTerm.length <= 6) {
+      return;
     }
-  }, [searchTerm, subs?.data]);
+
+    if (searchTerm.length >= 3) {
+      searchSubscriber({ term: searchTerm });
+    }
+  }, [searchTerm]);
 
   useEffect(() => {
-    setRecipientsCount(selectedContacts.length);
-  }, [selectedContacts]);
+    if (selectedGroup == '') {
+      setRecipientsCount(0);
+    }
+    if (selectedGroup == 'all') {
+      setRecipientsCount(targets?.data?.all_subscribers);
+      setSearchTerm('');
+      setSearchResults([]);
+    }
+    if (selectedGroup == 'enough-balance') {
+      setRecipientsCount(targets?.data?.all_enough_balance);
+      setSearchTerm('');
+      setSearchResults([]);
+    }
+    if (selectedGroup == 'low-balance') {
+      setRecipientsCount(targets?.data?.all_low_balance);
+      setSearchTerm('');
+      setSearchResults([]);
+    }
+    if (selectedContacts.length) {
+      setRecipientsCount(selectedContacts.length);
+    }
+  }, [selectedGroup, selectedContacts]);
 
   useEffect(() => {
     if (selectedGroup == '') {
@@ -84,11 +121,7 @@ function PageBody() {
         list: [],
       });
 
-      let selectedList = [];
-
-      subs?.data?.forEach((item) => selectedList.push(item));
-
-      setSelectedContacts(selectedList);
+      setSelectedContacts([]);
     }
 
     if (selectedGroup == 'enough-balance') {
@@ -99,15 +132,7 @@ function PageBody() {
         list: [],
       });
 
-      const filteredList = subs?.data?.filter(
-        (item) => item.has_enough_balance == true,
-      );
-
-      let selectedList = [];
-
-      filteredList.forEach((item) => selectedList.push(item));
-
-      setSelectedContacts(selectedList);
+      setSelectedContacts([]);
     }
 
     if (selectedGroup == 'low-balance') {
@@ -118,26 +143,28 @@ function PageBody() {
         list: [],
       });
 
-      const filteredList = subs?.data?.filter(
-        (item) => item.has_enough_balance == false,
-      );
+      setSelectedContacts([]);
+    }
 
-      let selectedList = [];
-
-      filteredList.forEach((item) => selectedList.push(item));
-
-      setSelectedContacts(selectedList);
+    if (selectedContacts.length) {
+      setGroup({
+        all_subscribers: false,
+        all_enough_balance: false,
+        all_low_balance: false,
+        list: selectedContacts,
+      });
     }
   }, [selectedGroup]);
 
   const onAddToRecipientList = async (sub) => {
+    setSelectedGroup('');
     let selectedSub = [];
 
     if (!selectedContacts.includes(sub)) {
-      selectedSub.push(sub);
+      selectedSub = [...selectedContacts, sub];
       setSelectedContacts([...selectedContacts, sub]);
     } else {
-      const filteredList = selectedSub.filter((item) => item != sub);
+      const filteredList = selectedContacts.filter((item) => item != sub);
       selectedSub = filteredList;
       setSelectedContacts(filteredList);
     }
@@ -148,6 +175,8 @@ function PageBody() {
       all_low_balance: false,
       list: selectedSub,
     });
+
+    setRecipientsCount(selectedContacts.length);
   };
 
   return (
@@ -247,7 +276,7 @@ function PageBody() {
           </thead>
 
           <tbody>
-            {subscribers?.map((user, index) => (
+            {searchResults?.map((user, index) => (
               <tr
                 onClick={() => onAddToRecipientList(user)}
                 key={user._id}
@@ -285,81 +314,47 @@ function PageBody() {
           <div className='p-10 text-center text-sm'>getting subscribers...</div>
         )}
 
-        {!subs?.data?.length && !gettingSubs && (
+        {/* {!subs?.data?.length && !gettingSubs && (
           <div className='p-10 text-center text-sm'>No subscriber found</div>
-        )}
+        )} */}
 
-        {searchTerm?.length && !subscribers.length ? (
+        {searchTerm?.length && !searchResults?.length && !gettingSubs ? (
           <div className='p-10 text-center text-sm'>No subscriber found</div>
         ) : null}
 
-        {/*      
-        <div className='mt-8 flex flex-col items-center md:flex-row justify-center md:justify-between'>
-         
-          <div className='text-sm text-gray-700 mb-4 md:mb-0 md:pl-3 flex gap-1 items-center'>
-            Showing
-            <span className='font-semibold text-gray-900'>
-              {' '}
-              Page {meta?.current_page}/{meta?.total_pages}
+        {!searchTerm?.length && selectedGroup == '' ? (
+          <div className='p-10 text-center'>
+            No subscribers selected to receive messages
+          </div>
+        ) : null}
+
+        {!searchTerm?.length && selectedGroup == 'all' ? (
+          <div className='p-10 text-center'>
+            <span className='font-semibold'>
+              {targets?.data?.all_subscribers}
             </span>{' '}
-            of
-            <span className='font-semibold text-gray-900'>
+            subscribers selected to receive messages
+          </div>
+        ) : null}
+
+        {!searchTerm?.length && selectedGroup == 'enough-balance' ? (
+          <div className='p-10 text-center'>
+            <span className='font-semibold'>
+              {targets?.data?.all_enough_balance}
+            </span>{' '}
+            subscribers selected to receive messages
+          </div>
+        ) : null}
+
+        {!searchTerm?.length && selectedGroup == 'low-balance' ? (
+          <div className='p-10 text-center'>
+            <span className='font-semibold'>
               {' '}
-              {meta?.count} Users
-            </span>
+              {targets?.data?.all_low_balance}
+            </span>{' '}
+            subscribers selected to receive messages
           </div>
-
-      
-          <div className='flex items-center'>
-            {meta?.prev_page && (
-              <button
-                onClick={() => {
-                  setUsersURL(meta?.prev_page);
-                  refetchUsers();
-                }}
-                className='pagination-btn'
-              >
-                <svg
-                  className='mr-2 w-5 h-5'
-                  fill='currentColor'
-                  viewBox='0 0 20 20'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <path
-                    fillRule='evenodd'
-                    d='M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z'
-                    clipRule='evenodd'
-                  ></path>
-                </svg>
-                Previous
-              </button>
-            )}
-
-            {meta?.next_page && (
-              <button
-                onClick={() => {
-                  setUsersURL(meta?.next_page);
-                  refetchUsers();
-                }}
-                className='pagination-btn'
-              >
-                Next
-                <svg
-                  className='ml-2 w-5 h-5'
-                  fill='currentColor'
-                  viewBox='0 0 20 20'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <path
-                    fillRule='evenodd'
-                    d='M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z'
-                    clipRule='evenodd'
-                  ></path>
-                </svg>
-              </button>
-            )}
-          </div>
-        </div> */}
+        ) : null}
       </div>
 
       {/* subs table end */}
@@ -368,10 +363,18 @@ function PageBody() {
 }
 
 function AdminSMSMgt() {
+  const { user } = useSelector((state) => state.user);
+
   return (
     <div className='bg-black'>
       <Layout
-        headerArea={<NavItemsList menuLinks={menuLinks} />}
+        headerArea={
+          <NavItemsList
+            menuLinks={
+              user.user_role.includes('Admin') ? menuLinks : creatorMenuLinks
+            }
+          />
+        }
         mainArea={<PageBody />}
       />
     </div>

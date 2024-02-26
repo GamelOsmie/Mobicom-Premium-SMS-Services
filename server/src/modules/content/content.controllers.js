@@ -18,7 +18,7 @@ const createContents = async (req, res, next) => {
       category,
       publication_status,
       author: _id,
-      approval_status: user_role.includes('Admin') ? 'approved' : 'pending',
+      approval_status: 'approved',
     });
 
     res.status(201).json({
@@ -47,7 +47,7 @@ const getMyContents = async (req, res, next) => {
       .sort({
         updated_at: -1,
         created_at: -1,
-      });
+      }).limit(400);
     // .limit(pageSize)
     // .skip(pageSize * (pageNum - 1));
 

@@ -5,14 +5,12 @@ import CustomLoading from '../components/global/loading';
 const AdminSMSMgt = lazy(() => import('../components/admin/adminSMSMgt'));
 
 function SMSMgt() {
-  const { user } = useSelector((state) => state.user);
+  // const { user } = useSelector((state) => state.user);
 
   return (
-    user?.user_role.includes('Admin') && (
-      <Suspense fallback={<CustomLoading />}>
-        <AdminSMSMgt />
-      </Suspense>
-    )
+    <Suspense fallback={<CustomLoading />}>
+      <AdminSMSMgt />
+    </Suspense>
   );
 }
 

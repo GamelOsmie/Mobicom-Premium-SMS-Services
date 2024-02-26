@@ -312,6 +312,111 @@ function PageBody() {
               </>
             </div>
 
+            <div className='mb-6'>
+              <label htmlFor='has_2020_access' className='input-label'>
+                Has access to 2020
+              </label>
+              <select
+                id='has_2020_access'
+                className='input w-full'
+                {...register('has_2020_access')}
+                defaultValue={selectedUser?.data?.has_2020_access}
+              >
+                <option value={Boolean(selectedUser?.data?.has_2020_access)}>
+                  {selectedUser?.data?.has_2020_access ? 'Yes' : 'No'}
+                </option>
+                {selectedUser?.data?.has_2020_access ? (
+                  <option value={Boolean(false)}>No</option>
+                ) : (
+                  <option value={Boolean(true)}>Yes</option>
+                )}
+              </select>
+            </div>
+
+            <div className='mb-6'>
+              <label htmlFor='has_2021_access' className='input-label'>
+                Has access to 2021
+              </label>
+              <select
+                id='has_2021_access'
+                className='input w-full'
+                {...register('has_2021_access')}
+                defaultValue={selectedUser?.data?.has_2021_access}
+              >
+                <option value={Boolean(selectedUser?.data?.has_2021_access)}>
+                  {selectedUser?.data?.has_2021_access ? 'Yes' : 'No'}
+                </option>
+                {selectedUser?.data?.has_2021_access ? (
+                  <option value={Boolean(false)}>No</option>
+                ) : (
+                  <option value={Boolean(true)}>Yes</option>
+                )}
+              </select>
+            </div>
+
+            <div className='mb-6'>
+              <label htmlFor='has_2022_access' className='input-label'>
+                Has access to 2022
+              </label>
+              <select
+                id='has_2022_access'
+                className='input w-full'
+                {...register('has_2022_access')}
+                defaultValue={selectedUser?.data?.has_2022_access}
+              >
+                <option value={Boolean(selectedUser?.data?.has_2022_access)}>
+                  {selectedUser?.data?.has_2022_access ? 'Yes' : 'No'}
+                </option>
+                {selectedUser?.data?.has_2022_access ? (
+                  <option value={Boolean(false)}>No</option>
+                ) : (
+                  <option value={Boolean(true)}>Yes</option>
+                )}
+              </select>
+            </div>
+
+            <div className='mb-6'>
+              <label htmlFor='has_2023_access' className='input-label'>
+                Has access to 2023
+              </label>
+              <select
+                id='has_2023_access'
+                className='input w-full'
+                {...register('has_2023_access')}
+                defaultValue={selectedUser?.data?.has_2023_access}
+              >
+                <option value={Boolean(selectedUser?.data?.has_2023_access)}>
+                  {selectedUser?.data?.has_2023_access ? 'Yes' : 'No'}
+                </option>
+                {selectedUser?.data?.has_2023_access ? (
+                  <option value={Boolean(false)}>No</option>
+                ) : (
+                  <option value={Boolean(true)}>Yes</option>
+                )}
+              </select>
+            </div>
+
+            <div className='mb-6'>
+              <label htmlFor='has_2024_access' className='input-label'>
+                Has access to 2024
+              </label>
+              <select
+                id='has_2024_access'
+                className='input w-full'
+                {...register('has_2024_access')}
+                defaultValue={selectedUser?.data?.has_2024_access}
+              >
+                <option value={Boolean(selectedUser?.data?.has_2024_access)}>
+                  {selectedUser?.data?.has_2024_access ? 'Yes' : 'No'}
+                </option>
+                {selectedUser?.data?.has_2024_access ? (
+                  <option value={Boolean(false)}>No</option>
+                ) : (
+                  <option value={Boolean(true)}>Yes</option>
+                )}
+              </select>
+            </div>
+
             {/* <!-- save buttons --> */}
             <div className='flex justify-end'>
               <button

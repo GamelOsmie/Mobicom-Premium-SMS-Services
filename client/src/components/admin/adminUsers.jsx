@@ -176,10 +176,21 @@ function UserTable({ users, isLoading }) {
             </label>
             <p>{userDetails?.phone_number}</p>
           </div>
-          <div>
-            <label className='text-sm text-gray-300 capitalize'>email</label>
+          <div className='mb-4'>
+            <label className='text-sm text-gray-300 capitalize'>Email</label>
             <p>{userDetails?.email}</p>
           </div>
+
+          {userDetails?.user_role == 'Content Creator' && (
+            <div>
+              <label className='text-sm text-gray-300 capitalize'>Access</label>
+              {userDetails?.has_2020_access && <p>2020</p>}
+              {userDetails?.has_2021_access && <p>2021</p>}
+              {userDetails?.has_2022_access && <p>2022</p>}
+              {userDetails?.has_2023_access && <p>2023</p>}
+              {userDetails?.has_2024_access && <p>2024</p>}
+            </div>
+          )}
         </section>
       </Modal>
     </>

@@ -20,7 +20,9 @@ const requireUserAuth = async (req, res, next) => {
     //get the user that made the request and save it as part of the request
     req.user = await User.findById({
       _id,
-    }).select('_id is_active user_role');
+    }).select(
+      '_id is_active user_role has_2020_access has_2021_access has_2022_access has_2023_access has_2024_access',
+    );
 
     if (req.user.is_active === false) {
       res.cookie('token', '', { maxAge: 1000 });

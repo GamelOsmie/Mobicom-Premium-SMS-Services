@@ -27,11 +27,11 @@ function ContentList({ contents, isLoading }) {
                 className={`flex ${
                   user?.user_role == 'Content Creator' &&
                   content.publication_status == 'published'
-                    ? 'justify-between'
-                    : 'justify-end'
-                } items-center mb-10`}
+                    ? 'mb-0'
+                    : 'mb-10'
+                } items-center justify-end`}
               >
-                {user?.user_role == 'Content Creator' &&
+                {/* {user?.user_role == 'Content Creator' &&
                   content.publication_status == 'published' && (
                     <div>
                       {content.approval_status == 'pending' && (
@@ -46,7 +46,7 @@ function ContentList({ contents, isLoading }) {
                         <span className='inactive-pill'>rejected</span>
                       )}
                     </div>
-                  )}
+                  )} */}
 
                 {content.publication_status == 'draft' && (
                   <Link to={content.slug}>
@@ -69,18 +69,17 @@ function ContentList({ contents, isLoading }) {
               <p className='text-gray-400 mb-3'>{content.body}</p>
             </div>
 
-            {content.publication_status == 'published' &&
-              user.user_role.includes('Admin') && (
-                <div>
-                  <hr className='mb-5' />
-                  <Link to={`/sms/${content.category}/${content.slug}`}>
-                    <div className='text-blue-600 hover:text-blue-500 flex justify-center items-center gap-1'>
-                      <FiSend />
-                      <span> blast sms </span>
-                    </div>
-                  </Link>
-                </div>
-              )}
+            {content.publication_status == 'published' && (
+              <div>
+                <hr className='mb-5' />
+                <Link to={`/sms/${content.category}/${content.slug}`}>
+                  <div className='text-blue-600 hover:text-blue-500 flex justify-center items-center gap-1'>
+                    <FiSend />
+                    <span> blast sms </span>
+                  </div>
+                </Link>
+              </div>
+            )}
           </article>
         ))}
       </div>

@@ -56,6 +56,26 @@ const UserSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    has_2020_access: {
+      type: Boolean,
+      default: false,
+    },
+    has_2021_access: {
+      type: Boolean,
+      default: false,
+    },
+    has_2022_access: {
+      type: Boolean,
+      default: false,
+    },
+    has_2023_access: {
+      type: Boolean,
+      default: false,
+    },
+    has_2024_access: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
@@ -73,7 +93,27 @@ UserSchema.statics.signup = async function (
   email,
   phone_number,
   password,
+  has_2020_access,
+  has_2021_access,
+  has_2022_access,
+  has_2023_access,
+  has_2024_access,
 ) {
+  console.log({
+    user_role,
+    username,
+    first_name,
+    last_name,
+    middle_name,
+    email,
+    phone_number,
+    has_2020_access,
+    has_2021_access,
+    has_2022_access,
+    has_2023_access,
+    has_2024_access,
+    password,
+  });
   //check if pass and phone numbers exist
   if (
     !user_role ||
@@ -81,8 +121,7 @@ UserSchema.statics.signup = async function (
     !first_name ||
     !last_name ||
     !phone_number ||
-    !password ||
-    !email
+    !password
   ) {
     throw new Error('All fields must be filled');
   }
@@ -104,6 +143,16 @@ UserSchema.statics.signup = async function (
 
   if (emailExists) {
     throw new Error('Email already in use');
+  }
+
+  if (
+    !has_2020_access ||
+    !has_2021_access ||
+    !has_2022_access ||
+    !has_2023_access ||
+    !has_2024_access
+  ) {
+    throw new Error('User should be given access to at least 1 service');
   }
 
   //validate email
@@ -150,6 +199,11 @@ UserSchema.statics.signup = async function (
     email,
     phone_number,
     password: hash,
+    has_2020_access: user_role.includes('Admin') ? true : has_2020_access,
+    has_2021_access: user_role.includes('Admin') ? true : has_2021_access,
+    has_2022_access: user_role.includes('Admin') ? true : has_2022_access,
+    has_2023_access: user_role.includes('Admin') ? true : has_2023_access,
+    has_2024_access: user_role.includes('Admin') ? true : has_2024_access,
   });
 
   return user;

@@ -3,7 +3,6 @@ const Subscriber = require('./subscribers.model');
 const paginate = require('../../utils/paginationConfig');
 const checkNetworkType = require('../../utils/networkDialCodes');
 const numberConverter = require('../../utils/numberConverter');
-// const updateEnoughBalanceQueue = require('../../queue-jobs/update_enough_balance');
 
 const subscribe = async (req, res, next) => {
   const { msisdn_no } = req.body;
@@ -36,7 +35,7 @@ const subscribe = async (req, res, next) => {
       });
     }
 
-    const network = checkNetworkType(msisdn_no);
+    const network = checkNetworkType(converted_msisdn_no);
 
     if (!network) {
       return next(errorResponse(400, 'Your network is not supported'));
@@ -157,23 +156,24 @@ const updateLowBalance = async (req, res, next) => {
 };
 
 const getAllSubscribers = async (req, res, next) => {
-  // const pageSize = 150;
-  // const pageNum = parseInt(req.query.page) || 1;
-  // const offset = pageSize * (pageNum - 1);
+  const pageSize = 150;
+  const pageNum = parseInt(req.query.page) || 1;
+  const offset = pageSize * (pageNum - 1);
 
   try {
-    const subscribers = await Subscriber.find({ is_subscribed: true }).lean();
-    // .skip(offset)
-    // .limit(pageSize);
+    const subscribers = await Subscriber.find({ is_subscribed: true })
+      .lean()
+      .skip(offset)
+      .limit(pageSize);
 
-    // const count = await Subscriber.countDocuments({ is_subscribed: true });
-    // const meta = paginate({ count, pageNum, pageSize, req });
+    const count = await Subscriber.countDocuments({ is_subscribed: true });
+    const meta = paginate({ count, pageNum, pageSize, req });
 
     return res.status(200).json({
       status: 'success',
       message: 'Subscribers fetched successfully',
       data: subscribers,
-      // meta,
+      meta,
     });
   } catch (error) {
     return next(errorResponse(400, error.message));
@@ -242,6 +242,56 @@ const getEnoughBalanceSubscribers = async (req, res, next) => {
   }
 };
 
+const getSMSTargetGroups = async (req, res, next) => {
+  try {
+    const all_subscribers = await Subscriber.countDocuments({
+      is_subscribed: true,
+    });
+    const all_low_balance = await Subscriber.countDocuments({
+      is_subscribed: true,
+      has_enough_balance: false,
+    });
+
+    const all_enough_balance = await Subscriber.countDocuments({
+      is_subscribed: true,
+      has_enough_balance: true,
+    });
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'SMS target groups fetched successfully',
+      data: {
+        all_subscribers,
+        all_low_balance,
+        all_enough_balance,
+      },
+    });
+  } catch (error) {
+    return next(errorResponse(400, error.message));
+  }
+};
+
+const searchSubscriber = async (req, res, next) => {
+  const { term } = req.body;
+
+  try {
+    console.log(term);
+
+    const subscribers = await Subscriber.find({
+      is_subscribed: true,
+      msisdn_no: { $regex: term, $options: 'i' },
+    }).limit(10);
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Subscribers fetched successfully',
+      data: subscribers,
+    });
+  } catch (error) {
+    return next(errorResponse(400, error.message));
+  }
+};
+
 module.exports = {
   subscribe,
   unsubscribe,
@@ -250,4 +300,6 @@ module.exports = {
   getAllSubscribers,
   getLowBalanceSubscribers,
   getEnoughBalanceSubscribers,
+  getSMSTargetGroups,
+  searchSubscriber,
 };

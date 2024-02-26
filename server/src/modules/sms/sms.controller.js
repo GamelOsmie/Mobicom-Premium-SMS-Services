@@ -28,118 +28,27 @@ const sendSMS = async (req, res, next) => {
 
     // send to 2020 subs
     if (category == '2020') {
-      
-      if (group.all_subscribers) {
-        receivers = await Subscriber2020.find();
-      }
-
-      if (group.all_enough_balance) {
-        receivers = await Subscriber2020.find({ has_enough_balance: true });
-      }
-
-      if (group.all_low_balance) {
-        receivers = await Subscriber2020.find({ has_enough_balance: false });
-      }
-
-      if (group.list.length) {
-        receivers = group.list;
-      }
-
-      await smsDeliveryQueueFor2020.add({ receivers, message: refinedSMS });
-
+      await smsDeliveryQueueFor2020.add({ group, message: refinedSMS });
     }
 
     // send to 2021 subs
     if (category == '2021') {
-      
-      if (group.all_subscribers) {
-        receivers = await Subscriber2021.find();
-      }
-
-      if (group.all_enough_balance) {
-        receivers = await Subscriber2021.find({ has_enough_balance: true });
-      }
-
-      if (group.all_low_balance) {
-        receivers = await Subscriber2021.find({ has_enough_balance: false });
-      }
-
-      if (group.list.length) {
-        receivers = group.list;
-      }
-
-      await smsDeliveryQueueFor2021.add({ receivers, message: refinedSMS });
-
+      await smsDeliveryQueueFor2021.add({ group, message: refinedSMS });
     }
 
     // send to 2022 subs
     if (category == '2022') {
-      let receivers;
-
-      if (group.all_subscribers) {
-        receivers = await Subscriber2022.find();
-      }
-
-      if (group.all_enough_balance) {
-        receivers = await Subscriber2022.find({ has_enough_balance: true });
-      }
-
-      if (group.all_low_balance) {
-        receivers = await Subscriber2022.find({ has_enough_balance: false });
-      }
-
-      if (group.list.length) {
-        receivers = group.list;
-      }
-
-      await smsDeliveryQueueFor2022.add({ receivers, message: refinedSMS });
-      
+      await smsDeliveryQueueFor2022.add({ group, message: refinedSMS });
     }
 
     // send to 2023 subs
     if (category == '2023') {
-      let receivers;
-    
-      if (group.all_subscribers) {
-        receivers = await Subscriber2023.find();
-      }
-
-      if (group.all_enough_balance) {
-        receivers = await Subscriber2023.find({ has_enough_balance: true });
-      }
-
-      if (group.all_low_balance) {
-        receivers = await Subscriber2023.find({ has_enough_balance: false });
-      }
-
-      if (group.list.length) {
-        receivers = group.list;
-      }
-
-     await smsDeliveryQueueFor2023.add({ receivers, message: refinedSMS });
+      await smsDeliveryQueueFor2023.add({ group, message: refinedSMS });
     }
 
     // send to 2024 subs
     if (category == '2024') {
-      let receivers;
-
-      if (group.all_subscribers) {
-        receivers = await Subscriber2024.find();
-      }
-
-      if (group.all_enough_balance) {
-        receivers = await Subscriber2024.find({ has_enough_balance: true });
-      }
-
-      if (group.all_low_balance) {
-        receivers = await Subscriber2024.find({ has_enough_balance: false });
-      }
-
-      if (group.list.length) {
-        receivers = group.list;
-      }
-
-     await smsDeliveryQueueFor2024.add({ receivers, message: refinedSMS });
+      await smsDeliveryQueueFor2024.add({ group, message: refinedSMS });
     }
 
     return res.json({
